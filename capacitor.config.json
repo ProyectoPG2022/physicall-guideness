@@ -1,0 +1,6 @@
+{
+	"appId": "io.ionic.starter",
+	"appName": "PhysicalGuideness",
+	"webDir": "www",
+	"bundledWebRuntime": false
+}

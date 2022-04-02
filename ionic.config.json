@@ -1,0 +1,8 @@
+{
+  "name": "PhysicalGuideness",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular",
+  "id": "4e3fecb3"
+}
