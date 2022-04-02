@@ -12,6 +12,10 @@ const routes: Routes = [
   {
     path: 'perfil',
     loadChildren: () => import('./perfil/perfil.module').then( m => m.PerfilPageModule)
+  },
+  {
+    path: 'mensages',
+    loadChildren: () => import('./mensages/mensages.module').then( m => m.MensagesPageModule)
   }
 
 ];
