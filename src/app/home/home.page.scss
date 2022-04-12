@@ -8,7 +8,8 @@
 .searchbar{
     margin-bottom: auto;
     margin-top: auto;
-    height: 60px;
+    height: 3.7rem;
+    width: 100%;
     background-color: #51bfff;
     border-radius: 30px;
     padding: 10px;
@@ -38,6 +39,12 @@
     text-decoration:none;
 }
 
-.fas{
+.fas {
+    width: 50%;
+    aspect-ratio: 1;
+    transition: width 0.2s ease-in-out;
+}
 
+.fas:hover {
+    width: 65%;
 }
