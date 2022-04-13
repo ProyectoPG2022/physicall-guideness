@@ -20,6 +20,10 @@ const routes: Routes = [
         loadChildren: () => import('../mensages/mensages.module').then(m => m.MensagesPageModule)
       },
       {
+        path: 'register',
+        loadChildren: () => import('../register/register.module').then(m => m.RegisterPageModule)
+      },
+      {
         path: '',
         redirectTo: '/tabs/home',
         pathMatch: 'full'
