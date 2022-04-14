@@ -12,8 +12,8 @@ import { Observable, of } from 'rxjs';
 export class AuthService {
   public user$:Observable<Usuario>;
 
-  constructor(public auth:AngularFireAuth, private afs:AngularFirestore) { 
-    this.user$ = this.auth.authState.pipe(switchMap((user)=>{
+  constructor(public afAuth:AngularFireAuth, private afs:AngularFirestore) { 
+    this.user$ = this.afAuth.authState.pipe(switchMap((user)=>{
       if (user){
         return this.afs.doc<Usuario>(`usuarios/${user.uid}`).valueChanges();
       }
@@ -31,17 +31,17 @@ export class AuthService {
   //Método para resetear la contraseña del usuario
   async resetPassword(email:string):Promise<void>{
     try{
-     return  this.auth.sendPasswordResetEmail(email);
+     return  this.afAuth.sendPasswordResetEmail(email);
     }catch(error){
       console.log(error);
     }
   }
 
   //Método para registro con google
-  async googleLogin():Promise<Usuario>{
+  async loginGoogle():Promise<Usuario>{
     try{
-     const {user}= await this.auth.signInWithPopup(new firebase.default.auth.GoogleAuthProvider());
-     this.actualizarDatosUsuario(user);
+     const {user}= await this.afAuth.signInWithPopup(new firebase.default.auth.GoogleAuthProvider());
+     this.updateUserData(user);
      return user;
     }catch(error){
       console.log(error);
@@ -49,9 +49,9 @@ export class AuthService {
   }
 
   //Método de registro con email y contraseña
-  async register(email:string ,contrasena:string):Promise<Usuario>{
+  async register(email:string ,password:string):Promise<Usuario>{
     try{
-     const {user}= await this.auth.createUserWithEmailAndPassword(email,contrasena);
+     const {user}= await this.afAuth.createUserWithEmailAndPassword(email,password);
      await this.sendVerificationEmail();
      return user;
     }catch(error){
@@ -60,19 +60,27 @@ export class AuthService {
   }
 
   //Método para mandar email de verificación
-  async sendVerificationEmail(){
+  async sendVerificationEmail():Promise<void>{
     try{
-      return (await this.auth.currentUser).sendEmailVerification();
+      return (await this.afAuth.currentUser).sendEmailVerification();
     }catch(error){
       console.log(error);
     }
   }
+  isEmailVerified(user:Usuario){
+    if(user.emailVerified){
+      return true;
+    }else{
+      return false;
+    }
+    //return user.emailVerified = true ? true : false;
+  }
 
   //Método de registro con email y contraseña 
-  async login(email:string ,contrasena:string):Promise<Usuario>{
+  async login(email:string ,password:string):Promise<Usuario>{
     try{
-     const {user}= await this.auth.signInWithEmailAndPassword(email,contrasena);
-     this.actualizarDatosUsuario(user);
+     const {user}= await this.afAuth.signInWithEmailAndPassword(email,password);
+     this.updateUserData(user);
      return user;
     }catch(error){
       console.log(error);
@@ -82,22 +90,23 @@ export class AuthService {
   //Método de cerrar sesión
   async logout():Promise<void>{
     try{
-      this.auth.signOut();
+      await this.afAuth.signOut();
     }catch(error){
       console.log(error);
     }
   }
-  private actualizarDatosUsuario(usuario:Usuario){
-    const refUsuario:AngularFirestoreDocument<Usuario> = this.afs.doc(`usuarios/${usuario.uid}`);
+  private updateUserData(user:Usuario){
+    const userRef:AngularFirestoreDocument<Usuario> = this.afs.doc(`usuarios/${user.uid}`);
     const datos:Usuario={
-      uid:usuario.uid,
-      displayName:usuario.displayName,
-      email:usuario.email,
+      uid:user.uid,
+      displayName:user.displayName,
+      email:user.email,
+      emailVerified: user.emailVerified
       /*biografia:usuario.biografia,
       contrasena:usuario.contrasena,
       foto:usuario.foto,
       username:usuario.username*/
     }
-    return refUsuario.set(datos,{merge:true})
+    return userRef.set(datos,{merge:true});
   }
 }

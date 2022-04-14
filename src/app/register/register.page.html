@@ -6,10 +6,10 @@
 
 <ion-content>
 <form class="formulario">
-  <ion-item lines="full" class="m-2">
+  <!--ion-item lines="full" class="m-2">
     <ion-label position="floating">Nombre de usuario</ion-label>
     <ion-input type="text" #username required></ion-input>
-  </ion-item>
+  </ion-item-->
   <ion-item lines="full" class="m-2">
     <ion-label position="floating">Correo electronico</ion-label>
     <ion-input type="text" #email required></ion-input>
@@ -18,28 +18,39 @@
     <ion-label position="floating">Contraseña</ion-label>
     <ion-input type="password" #password required></ion-input>
   </ion-item>
-  
-  <ion-item lines="full" class="m-2">
-    <ion-label position="floating">Biografía</ion-label>
-    <ion-textarea type="ion-textarea" #biografia required></ion-textarea>
-  </ion-item>
-  <ion-row>
+    <ion-row>
     <ion-col>
       <ion-button type="submit" class="m-2" (click)="onRegister(email, password)"> </ion-button>
     </ion-col>
   </ion-row>
-  <div class="m-2">
-    <label>Tipo de usuario</label>
-    <br>
+  <!--ion-item lines="full" class="m-2">
+    <ion-label position="floating">Biografía</ion-label>
+    <ion-textarea type="ion-textarea" #biografia required></ion-textarea>
+  </ion-item-->
+  <!--ion-row>
+    <ion-col>
+      <ion-button type="submit" class="m-2" (click)="onRegister(email, password)"> </ion-button>
+    </ion-col>
+  </ion-row-->
+  <!--div class="m-2">
+    <p>Tipo de usuario</p>
     <div class="form-check form-check-inline">
-      <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
-      <label class="form-check-label" for="inlineRadio1">Viajero</label>
+      <ion-input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1"></ion-input>
+      <ion-label class="form-check-label" for="inlineRadio1">Viajero</ion-label>
     </div>
     <div class="form-check form-check-inline">
-      <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
-      <label class="form-check-label" for="inlineRadio2">Guia</label>
+      <ion-input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2"></ion-input>
+      <ion-label class="form-check-label" for="inlineRadio2">Guia</ion-label>
     </div>
-  </div>
+  </div-->
+  <ion-row>
+    <ion-col>
+      <p>
+        <a href="/login">Ya tengo una cuenta</a>
+      </p>
+    </ion-col>
+  </ion-row>
 </form>
+
 </ion-content>
 
