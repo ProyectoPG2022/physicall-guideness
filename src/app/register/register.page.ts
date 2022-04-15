@@ -7,29 +7,33 @@ import { AuthService } from '../auth.service';
   templateUrl: './register.page.html',
   styleUrls: ['./register.page.scss'],
 })
+
 export class RegisterPage implements OnInit {
 
   constructor(private authSvc:AuthService,private router:Router) { }
 
   ngOnInit() {
   }
-  async onRegister(email,password){
+  async onRegister(email,password, username,biografia,tipo){
     try{
-      const user=await this.authSvc.register(email.value,password.value);
+      const user=await this.authSvc.register(email.value,password.value, username.value, biografia.value,tipo.value);
       if(user){
-        //Todo CheckMail
         const isVerified=this.authSvc.isEmailVerified(user);
-        this.redirectUser(isVerified);
+        const isFirstTime=this.authSvc.isFirstTime(user);
+        this.redirectUser(isVerified,isFirstTime);
       }
     }catch(error){
       console.log(error)
     }
   }
-  private redirectUser(isVerified:boolean):void{
-    if(isVerified){
-      this.router.navigate(['home']);
-    }else{
+  private redirectUser(isVerified:boolean,isFirstTime:boolean):void{
+    if(!isVerified){
       this.router.navigate(['verify-email']);
+    }else{
+      if(isFirstTime)
+        this.router.navigate(['setup-profile']);
+      else
+        this.router.navigate(['home']);
     }
   }
 }

@@ -8,6 +8,6 @@ import { AuthService } from '../auth.service';
 })
 export class TabsPage {
 
-  constructor(public auth:AuthService) {}
+  constructor() {}
 
 }

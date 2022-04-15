@@ -19,6 +19,8 @@ export class LoginPage implements OnInit {
       if(user){
         //Todo: Chekemail
         const isVerified = this.authSvc.isEmailVerified(user);
+        //Comprobamos que es la primera vez que inicia sesión
+       // const isFirstTime = this.authSvc.isFirstTime(user);
         this.redirectUser(isVerified);
       }
     }catch(error){
@@ -26,7 +28,7 @@ export class LoginPage implements OnInit {
     }
   }
   
-  async onLoginGoogle(){
+  /*async onLoginGoogle(){
     try{
       const user = await this.authSvc.loginGoogle();
       if(user){
@@ -37,7 +39,7 @@ export class LoginPage implements OnInit {
     }catch(error){
       console.log(error);
     };
-  }
+  }*/
   private redirectUser(isVerified:boolean):void{
     if(isVerified){
       this.router.navigate(['home']);

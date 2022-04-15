@@ -20,23 +20,23 @@
       <ion-button type="submit" class="m-1" (click)="onLogin(email,password)">
         Iniciar sesión
       </ion-button>
-      <ion-button type="submit" class="m-1" color="danger" (click)="onLoginGoogle()">
+      <!--ion-button type="submit" class="m-1" color="danger" (click)="onLoginGoogle()">
         Iniciar con
          <i  class="fab fa-google m-1"></i>
-      </ion-button>
+      </ion-button-->
     </ion-col>
   </ion-row>
   <ion-row class="m-2">
     <ion-col>
       <p>
-        <a href="/register">Crear cuenta</a>
+        <a routerLink="/register">Crear cuenta</a>
       </p>
     </ion-col>
   </ion-row>
   <ion-row class="m-2">
     <ion-col>
       <p>
-        <a href="/register">He olvidado la contraseña</a>
+        <a routerLink="/forgot-password">He olvidado la contraseña</a>
       </p>
     </ion-col>
   </ion-row>

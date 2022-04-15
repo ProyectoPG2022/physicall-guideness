@@ -4,18 +4,22 @@ import * as firebase from 'firebase/compat/app';
 import { switchMap } from 'rxjs/operators';
 import { Usuario } from './intefaces/usuario.interface';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/compat/firestore';
-import { Observable, of } from 'rxjs';
+import { bindNodeCallback, Observable, of } from 'rxjs';
+import { Router } from '@angular/router';
+import { Viajero } from './intefaces/viajero.interface';
+import { Guia } from './intefaces/guia.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+ 
   public user$:Observable<Usuario>;
 
-  constructor(public afAuth:AngularFireAuth, private afs:AngularFirestore) { 
+  constructor(public afAuth:AngularFireAuth, private afs:AngularFirestore,private router:Router) { 
     this.user$ = this.afAuth.authState.pipe(switchMap((user)=>{
       if (user){
-        return this.afs.doc<Usuario>(`usuarios/${user.uid}`).valueChanges();
+        return this.afs.doc<any>(`usuarios/${user.uid}`).valueChanges();
       }
       return of(null);
     }));
@@ -38,21 +42,28 @@ export class AuthService {
   }
 
   //Método para registro con google
-  async loginGoogle():Promise<Usuario>{
+  /*async loginGoogle():Promise<any>{
     try{
      const {user}= await this.afAuth.signInWithPopup(new firebase.default.auth.GoogleAuthProvider());
-     this.updateUserData(user);
+     this.updateUserDataGoogle(user);
      return user;
     }catch(error){
       console.log(error);
     }
-  }
+  }*/
 
   //Método de registro con email y contraseña
-  async register(email:string ,password:string):Promise<Usuario>{
+  async register(email:string ,password:string, username:string,biografia:string,tipo:string,):Promise<any>{
     try{
+     //Mete al usuario en firebase auth
      const {user}= await this.afAuth.createUserWithEmailAndPassword(email,password);
+     const isFirstTime=true;
+     const biografi=biografia;
+     const type=tipo;
+     
+     this.saveUserData(user,username,isFirstTime, biografi,type);
      await this.sendVerificationEmail();
+     //this.router.navigate(['setup-profile']);
      return user;
     }catch(error){
       console.log(error);
@@ -67,20 +78,30 @@ export class AuthService {
       console.log(error);
     }
   }
-  isEmailVerified(user:Usuario){
+  isEmailVerified(user:any){
     if(user.emailVerified){
       return true;
     }else{
       return false;
     }
+    //Con la asignación condicional no chuta y no se porque
     //return user.emailVerified = true ? true : false;
   }
 
+  isFirstTime(user: any) {
+    if(user.isFirstTime){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+
   //Método de registro con email y contraseña 
-  async login(email:string ,password:string):Promise<Usuario>{
+  async login(email:string ,password:string):Promise<any>{
     try{
      const {user}= await this.afAuth.signInWithEmailAndPassword(email,password);
-     this.updateUserData(user);
+     this.saveUser(user);
      return user;
     }catch(error){
       console.log(error);
@@ -95,18 +116,67 @@ export class AuthService {
       console.log(error);
     }
   }
-  private updateUserData(user:Usuario){
+  private saveUser(user:any){
+    const userRef:AngularFirestoreDocument<Usuario> = this.afs.doc(`usuarios/${user.uid}`);
+    const datos:Usuario={
+      uid: user.uid,
+      username: user.username,
+      email: user.email,
+      emailVerified: user.emailVerified,
+      isFirstTime: user.isFirstTime,
+      biografia: ''
+    }
+    return userRef.set(datos,{merge:true});
+  }
+
+  //Guarda el usuario en la base de datos
+  /*private updateUserDataGoogle(user:any){
     const userRef:AngularFirestoreDocument<Usuario> = this.afs.doc(`usuarios/${user.uid}`);
     const datos:Usuario={
       uid:user.uid,
       displayName:user.displayName,
       email:user.email,
-      emailVerified: user.emailVerified
-      /*biografia:usuario.biografia,
-      contrasena:usuario.contrasena,
-      foto:usuario.foto,
-      username:usuario.username*/
-    }
+      emailVerified: user.emailVerified,
+      isFirstTime:user.isFirstTime,
+      /*biografia:user.biografia,
+      contrasena:user.contrasena,
+      foto:user.foto,
+      username:user.username*/
+    /*}
+    
     return userRef.set(datos,{merge:true});
+  }*/
+
+  //Guarda el usuario en la base de datos
+  private saveUserData(user:any,nameuser:string,isFirstTime:boolean, biografi:string,type:string){
+    if(type=='Viajero'){
+      const userRef:AngularFirestoreDocument<Usuario> = this.afs.doc(`usuarios/${user.uid}`);
+      const datos:Viajero={
+        uid:user.uid,
+        username:nameuser,
+        email:user.email,
+        emailVerified: user.emailVerified,
+        isFirstTime:isFirstTime,
+        biografia:biografi,
+        sitios:[]
+        //foto:user.foto,
+      }
+      return userRef.set(datos,{merge:true});
+    }
+    if(type=='Guía'){
+      const userRef:AngularFirestoreDocument<Usuario> = this.afs.doc(`usuarios/${user.uid}`);
+      const datos:Guia={
+        uid:user.uid,
+        username:nameuser,
+        email:user.email,
+        emailVerified: user.emailVerified,
+        isFirstTime:isFirstTime,
+        biografia:biografi,
+        valoracionMedia:0.0
+        //foto:user.foto,
+      }
+      return userRef.set(datos,{merge:true});
+    }
   }
+  
 }
