@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 import { AuthService } from '../auth.service';
 
 @Component({
@@ -24,9 +25,41 @@ export class LoginPage implements OnInit {
         this.redirectUser(isVerified);
       }
     }catch(error){
-      console.log(error);
+      switch(error.code){
+        case 'auth/user-not-found':{
+          const body=document.getElementsByTagName("body")[0];
+          Swal.fire({
+            icon: 'error',
+            title: 'Algo ha ido mal :(',
+            text: 'El usuario no existe',
+          })
+          //No borar, po lo que dios mas quiera
+          //Chapuza que resuelve quita la clase de altura del sweetalert pq no se veia
+          body.classList.remove('swal2-height-auto');
+          break;
+        }
+        case 'auth/wrong-password':{
+          let password=document.getElementById('pass');
+          password.textContent='';
+          const body=document.getElementsByTagName("body")[0];
+          Swal.fire({
+            icon: 'error',
+            title: 'Algo ha ido mal :(',
+            text: 'Contraseña incorrecta',
+          })
+          //No borar, po lo que dios mas quiera
+          //Chapuza que resuelve quita la clase de altura del sweetalert pq no se veia
+          body.classList.remove('swal2-height-auto');
+         break;
+        }
+        case 'auth/invalid-email':
+
+          break;
+
+      }
     }
   }
+
   
   /*async onLoginGoogle(){
     try{

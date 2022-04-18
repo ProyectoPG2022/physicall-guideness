@@ -28,6 +28,7 @@
     "@ionic/angular": "^6.0.0",
     "firebase": "^9.6.10",
     "rxjs": "~6.6.0",
+    "sweetalert2": "^11.4.8",
     "tslib": "^2.2.0",
     "zone.js": "~0.11.4"
   },

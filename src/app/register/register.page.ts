@@ -19,21 +19,18 @@ export class RegisterPage implements OnInit {
       const user=await this.authSvc.register(email.value,password.value, username.value, biografia.value,tipo.value);
       if(user){
         const isVerified=this.authSvc.isEmailVerified(user);
-        const isFirstTime=this.authSvc.isFirstTime(user);
-        this.redirectUser(isVerified,isFirstTime);
+        //const isFirstTime=this.authSvc.isFirstTime(user);
+        this.redirectUser(isVerified);
       }
     }catch(error){
       console.log(error)
     }
   }
-  private redirectUser(isVerified:boolean,isFirstTime:boolean):void{
-    if(!isVerified){
-      this.router.navigate(['verify-email']);
+  private redirectUser(isVerified:boolean):void{
+    if(isVerified){
+      this.router.navigate(['home']);
     }else{
-      if(isFirstTime)
-        this.router.navigate(['setup-profile']);
-      else
-        this.router.navigate(['home']);
+      this.router.navigate(['verify-email']);             
     }
   }
 }

@@ -104,7 +104,12 @@ export class AuthService {
      this.saveUser(user);
      return user;
     }catch(error){
-      console.log(error);
+     throw error;
+      /*console.log(error.message);
+      switch(error.code){
+        case 'auth/user-not-found':
+          console.log('La has liado hermano');
+      }*/
     }
   }
 
