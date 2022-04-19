@@ -1,9 +1,22 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>verify-email</ion-title>
+    <ion-title>Verificación de email</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content *ngIf="user$ | async as user">
+  <ion-row>
+    <ion-col>
+      <h2>Gracias por registrarte en Physicall Guideness.</h2>
+      <p>Hemos enviado un email de confirmación a <strong>{{user.email}}</strong></p>
+      <p>Por favor, comprueba tu email y pulsa el link en azul para verificar tu dirección de correo.</p>
+
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col>
+      <ion-button  type="submit" color="primary" (click)="onSendEmail()">Reenviar email de verificación</ion-button>
+    </ion-col>
+  </ion-row>
 
 </ion-content>

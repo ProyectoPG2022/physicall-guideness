@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -7,9 +9,18 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ForgotPasswordPage implements OnInit {
 
-  constructor() { }
+  constructor(private authSvc:AuthService, private router:Router) { }
 
   ngOnInit() {
+  }
+  async onResetPassword(email){
+
+    try{
+      await this.authSvc.resetPassword(email.value);
+      this.router.navigate(['/login']);
+    }catch(error){
+      console.log(error);
+    }
   }
 
 }

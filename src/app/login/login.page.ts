@@ -48,7 +48,7 @@ export class LoginPage implements OnInit {
             text: 'Contraseña incorrecta',
           })
           //No borar, po lo que dios mas quiera
-          //Chapuza que resuelve quita la clase de altura del sweetalert pq no se veia
+          //Chapuza que resuelve/quita la clase de altura del sweetalert pq no se veia
           body.classList.remove('swal2-height-auto');
          break;
         }
