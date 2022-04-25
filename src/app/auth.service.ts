@@ -57,13 +57,11 @@ export class AuthService {
     try{
      //Mete al usuario en firebase auth
      const {user}= await this.afAuth.createUserWithEmailAndPassword(email,password);
-     const isFirstTime=true;
      const biografi=biografia;
      const type=tipo;
      
-     this.saveUserData(user,username,isFirstTime, biografi,type);
+     this.saveUserData(user,username, biografi,type);
      await this.sendVerificationEmail();
-     //this.router.navigate(['setup-profile']);
      return user;
     }catch(error){
       console.log(error);
@@ -78,7 +76,7 @@ export class AuthService {
       console.log(error);
     }
   }
-  isEmailVerified(user:any){
+  isEmailVerified(user:Usuario){
     if(user.emailVerified){
       return true;
     }else{
@@ -88,20 +86,11 @@ export class AuthService {
     //return user.emailVerified = true ? true : false;
   }
 
-  isFirstTime(user: any) {
-    if(user.isFirstTime){
-      return true;
-    }
-    else{
-      return false;
-    }
-  }
-
   //Método de registro con email y contraseña 
   async login(email:string ,password:string):Promise<any>{
     try{
-     const {user}= await this.afAuth.signInWithEmailAndPassword(email,password);
-     this.saveUser(user);
+     const user= await this.afAuth.signInWithEmailAndPassword(email,password);
+     this.updateUser(user);
      return user;
     }catch(error){
      throw error;
@@ -121,14 +110,14 @@ export class AuthService {
       console.log(error);
     }
   }
-  private saveUser(user:any){
+  private updateUser(user:any){
     const userRef:AngularFirestoreDocument<Usuario> = this.afs.doc(`usuarios/${user.uid}`);
     const datos:Usuario={
       uid: user.uid,
       username: user.username,
       email: user.email,
       emailVerified: user.emailVerified,
-      isFirstTime: user.isFirstTime,
+      
       biografia: ''
     }
     return userRef.set(datos,{merge:true});
@@ -153,7 +142,7 @@ export class AuthService {
   }*/
 
   //Guarda el usuario en la base de datos
-  private saveUserData(user:any,nameuser:string,isFirstTime:boolean, biografi:string,type:string){
+  private saveUserData(user:any,nameuser:string, biografi:string,type:string){
     if(type=='Viajero'){
       const userRef:AngularFirestoreDocument<Usuario> = this.afs.doc(`usuarios/${user.uid}`);
       const datos:Viajero={
@@ -161,7 +150,7 @@ export class AuthService {
         username:nameuser,
         email:user.email,
         emailVerified: user.emailVerified,
-        isFirstTime:isFirstTime,
+        
         biografia:biografi,
         sitios:[]
         //foto:user.foto,
@@ -175,7 +164,6 @@ export class AuthService {
         username:nameuser,
         email:user.email,
         emailVerified: user.emailVerified,
-        isFirstTime:isFirstTime,
         biografia:biografi,
         valoracionMedia:0.0
         //foto:user.foto,

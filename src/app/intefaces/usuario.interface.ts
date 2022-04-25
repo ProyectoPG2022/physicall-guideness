@@ -5,5 +5,4 @@ export interface Usuario{
     username:string,
     biografia:string,
     /*foto:string,*/
-    isFirstTime:boolean
 }

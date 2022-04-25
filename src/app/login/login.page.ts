@@ -16,12 +16,11 @@ export class LoginPage implements OnInit {
   }
   async onLogin(email,password){
     try{
-      const user= await this.authSvc.login(email.value,password.value);
+      console.log("HOla")
+      const user = await this.authSvc.login(email.value,password.value);
+      console.log(user.uid)
       if(user){
-        //Todo: Chekemail
         const isVerified = this.authSvc.isEmailVerified(user);
-        //Comprobamos que es la primera vez que inicia sesión
-       // const isFirstTime = this.authSvc.isFirstTime(user);
         this.redirectUser(isVerified);
       }
     }catch(error){
@@ -75,9 +74,9 @@ export class LoginPage implements OnInit {
   }*/
   private redirectUser(isVerified:boolean):void{
     if(isVerified){
-      this.router.navigate(['home']);
+      this.router.navigate(['/home']);
     }else{
-      this.router.navigate(['verify-email']);
+      this.router.navigate(['/verify-email']);
     }
   }
 }
