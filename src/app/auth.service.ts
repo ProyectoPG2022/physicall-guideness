@@ -76,7 +76,7 @@ export class AuthService {
       console.log(error);
     }
   }
-  isEmailVerified(user:Usuario){
+  isEmailVerified(user:any){
     if(user.emailVerified){
       return true;
     }else{
@@ -86,12 +86,14 @@ export class AuthService {
     //return user.emailVerified = true ? true : false;
   }
 
-  //Método de registro con email y contraseña 
+  //Método de login con email y contraseña 
   async login(email:string ,password:string):Promise<any>{
     try{
-     const user= await this.afAuth.signInWithEmailAndPassword(email,password);
-     this.updateUser(user);
-     return user;
+     const user = await this.afAuth.signInWithEmailAndPassword(email,password);
+
+     const usuario=this.updateUser(user);
+     console.log(usuario)
+     return usuario;
     }catch(error){
      throw error;
       /*console.log(error.message);
@@ -111,16 +113,16 @@ export class AuthService {
     }
   }
   private updateUser(user:any){
-    const userRef:AngularFirestoreDocument<Usuario> = this.afs.doc(`usuarios/${user.uid}`);
+    const userRef:AngularFirestoreDocument<Usuario> = this.afs.doc(`usuarios/${user.user.uid}`);
     const datos:Usuario={
-      uid: user.uid,
+      uid: user.user.uid,
       username: user.username,
-      email: user.email,
-      emailVerified: user.emailVerified,
-      
-      biografia: ''
+      email: user.user.email,
+      emailVerified: user.user.emailVerified,
+      biografia:user.biografia
     }
-    return userRef.set(datos,{merge:true});
+    console.log("datos",datos)
+    return  userRef.set(datos,{merge:true});//await userRef.update(datos);
   }
 
   //Guarda el usuario en la base de datos
@@ -146,10 +148,10 @@ export class AuthService {
     if(type=='Viajero'){
       const userRef:AngularFirestoreDocument<Usuario> = this.afs.doc(`usuarios/${user.uid}`);
       const datos:Viajero={
-        uid:user.uid,
+        uid:user.user.uid,
         username:nameuser,
-        email:user.email,
-        emailVerified: user.emailVerified,
+        email:user.user.email,
+        emailVerified: user.user.emailVerified,
         
         biografia:biografi,
         sitios:[]

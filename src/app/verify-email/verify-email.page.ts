@@ -19,10 +19,10 @@ export class VerifyEmailPage implements OnInit,OnDestroy {
   async onSendEmail(): Promise<void>{
     try{
       await this.authSvc.sendVerificationEmail();
-      this.router.navigate(['/login']);
+      this.router.navigate(['login']);
     }catch(error){
       console.log(error);
-      this.router.navigate(['/login']);
+      this.router.navigate(['login']);
     } 
   }
   ngOnDestroy():void{

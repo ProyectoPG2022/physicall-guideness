@@ -16,9 +16,10 @@ export class LoginPage implements OnInit {
   }
   async onLogin(email,password){
     try{
-      console.log("HOla")
       const user = await this.authSvc.login(email.value,password.value);
-      console.log(user.uid)
+      console.log("Hola");
+      console.log(user);
+
       if(user){
         const isVerified = this.authSvc.isEmailVerified(user);
         this.redirectUser(isVerified);
@@ -39,7 +40,7 @@ export class LoginPage implements OnInit {
         }
         case 'auth/wrong-password':{
           let password=document.getElementById('pass');
-          password.textContent='';
+          //Revisar
           const body=document.getElementsByTagName("body")[0];
           Swal.fire({
             icon: 'error',
@@ -74,9 +75,9 @@ export class LoginPage implements OnInit {
   }*/
   private redirectUser(isVerified:boolean):void{
     if(isVerified){
-      this.router.navigate(['/home']);
+      this.router.navigate(['home']);
     }else{
-      this.router.navigate(['/verify-email']);
+      this.router.navigate(['verify-email']);
     }
   }
 }
