@@ -21,6 +21,9 @@ export class HomePage implements OnInit {
       return of(null);
     }));
   }
+   onLogOut(){
+     this.authSvc.logout();
+  }
 
   ngOnInit() {
     

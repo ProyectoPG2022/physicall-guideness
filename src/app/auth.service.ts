@@ -35,7 +35,7 @@ export class AuthService {
   //Método para resetear la contraseña del usuario
   async resetPassword(email:string):Promise<void>{
     try{
-     return  this.afAuth.sendPasswordResetEmail(email);
+     return this.afAuth.sendPasswordResetEmail(email);
     }catch(error){
       console.log(error);
     }
@@ -56,7 +56,7 @@ export class AuthService {
   async register(email:string ,password:string, username:string,biografia:string,tipo:string,):Promise<any>{
     try{
      //Mete al usuario en firebase auth
-     const {user}= await this.afAuth.createUserWithEmailAndPassword(email,password);
+     const user= await this.afAuth.createUserWithEmailAndPassword(email,password);
      const biografi=biografia;
      const type=tipo;
      
@@ -90,17 +90,17 @@ export class AuthService {
   async login(email:string ,password:string):Promise<any>{
     try{
      const user = await this.afAuth.signInWithEmailAndPassword(email,password);
-
-     const usuario=this.updateUser(user);
-     console.log(usuario)
-     return usuario;
+     //(`ususrios/${user.user.emailVerified}`);
+     //this.updateUser();
+    //  if (user.user.emailVerified){
+    //   const usuario=this.updateUser(user);
+    //   console.log(usuario)
+    //   return usuario;
+    //  }else {
+      return user;
+     
     }catch(error){
      throw error;
-      /*console.log(error.message);
-      switch(error.code){
-        case 'auth/user-not-found':
-          console.log('La has liado hermano');
-      }*/
     }
   }
 
@@ -109,20 +109,27 @@ export class AuthService {
     try{
       await this.afAuth.signOut();
     }catch(error){
-      console.log(error);
+      throw error;
+      //console.log(error);
     }
   }
   private updateUser(user:any){
-    const userRef:AngularFirestoreDocument<Usuario> = this.afs.doc(`usuarios/${user.user.uid}`);
-    const datos:Usuario={
+    console.log("usuraio",user);
+    const userRef:AngularFirestoreDocument<Usuario> = this.afs.doc(`usuarios/${user.uid}`);
+    //const algo=this.afs.doc<any>(`usuarios/${user.user.uid}`).valueChanges();
+    //this.user$=algo;
+  
+    user.isEmailVerified=true;
+    return  this.afs.doc(`usuarios/${user.user.uid}`).update(user);
+    /*const datos={
       uid: user.user.uid,
       username: user.username,
       email: user.user.email,
       emailVerified: user.user.emailVerified,
-      biografia:user.biografia
-    }
-    console.log("datos",datos)
-    return  userRef.set(datos,{merge:true});//await userRef.update(datos);
+      biografia: user.biografi
+    }*/
+    //console.log("datos",datos)
+    //return  userRef.set(datos,{merge:true});//await userRef.update(datos);
   }
 
   //Guarda el usuario en la base de datos
@@ -146,7 +153,7 @@ export class AuthService {
   //Guarda el usuario en la base de datos
   private saveUserData(user:any,nameuser:string, biografi:string,type:string){
     if(type=='Viajero'){
-      const userRef:AngularFirestoreDocument<Usuario> = this.afs.doc(`usuarios/${user.uid}`);
+      const userRef:AngularFirestoreDocument<Usuario> = this.afs.doc(`usuarios/${user.user.uid}`);
       const datos:Viajero={
         uid:user.user.uid,
         username:nameuser,
