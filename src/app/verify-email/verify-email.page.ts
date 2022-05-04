@@ -8,14 +8,11 @@ import { AuthService } from '../auth.service';
   templateUrl: './verify-email.page.html',
   styleUrls: ['./verify-email.page.scss'],
 })
-export class VerifyEmailPage implements OnInit,OnDestroy {
-   user$: Observable<any>=this.authSvc.afAuth.user;
+export class VerifyEmailPage implements OnDestroy {
+  user$: Observable<any>=this.authSvc.afAuth.user;
 
   constructor(private authSvc:AuthService,private router:Router) { }
-  ngOnInit(): void {
-    //throw new Error('Method not implemented.');
-  }
-
+  
   async onSendEmail(): Promise<void>{
     try{
       await this.authSvc.sendVerificationEmail();
@@ -24,6 +21,10 @@ export class VerifyEmailPage implements OnInit,OnDestroy {
       console.log(error);
       this.router.navigate(['login']);
     } 
+  }
+  onGoHome(){
+    this.authSvc.logout();
+    this.router.navigate(['home']);
   }
   ngOnDestroy():void{
     this.authSvc.logout();

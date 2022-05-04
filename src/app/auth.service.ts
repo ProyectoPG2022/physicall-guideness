@@ -1,42 +1,42 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import * as firebase from 'firebase/compat/app';
 import { switchMap } from 'rxjs/operators';
 import { Usuario } from './intefaces/usuario.interface';
-import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/compat/firestore';
-import { bindNodeCallback, Observable, of } from 'rxjs';
+import {
+  AngularFirestore,
+  AngularFirestoreDocument,
+} from '@angular/fire/compat/firestore';
+import { Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { Viajero } from './intefaces/viajero.interface';
 import { Guia } from './intefaces/guia.interface';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
- 
-  public user$:Observable<Usuario>;
+  public user$: Observable<Usuario>;
 
-  constructor(public afAuth:AngularFireAuth, private afs:AngularFirestore,private router:Router) { 
-    this.user$ = this.afAuth.authState.pipe(switchMap((user)=>{
-      if (user){
-        return this.afs.doc<any>(`usuarios/${user.uid}`).valueChanges();
-      }
-      return of(null);
-    }));
+  constructor(
+    public afAuth: AngularFireAuth,
+    private afs: AngularFirestore,
+    private router: Router
+  ) {
+    this.user$ = this.afAuth.authState.pipe(
+      switchMap((user) => {
+        if (user) {
+          return this.afs.doc<any>(`usuarios/${user.uid}`).valueChanges();
+        }
+        return of(null);
+      })
+    );
   }
-  /*usuario = this.auth.authState.pipe ( map (authState=>{
-    if(authState){
-      return authState;
-    }else {
-      return null;
-    }
-  }))*/
 
   //Método para resetear la contraseña del usuario
-  async resetPassword(email:string):Promise<void>{
-    try{
-     return this.afAuth.sendPasswordResetEmail(email);
-    }catch(error){
+  async resetPassword(email: string): Promise<void> {
+    try {
+      return this.afAuth.sendPasswordResetEmail(email);
+    } catch (error) {
       console.log(error);
     }
   }
@@ -53,132 +53,115 @@ export class AuthService {
   }*/
 
   //Método de registro con email y contraseña
-  async register(email:string ,password:string, username:string,biografia:string,tipo:string,):Promise<any>{
-    try{
-     //Mete al usuario en firebase auth
-     const user= await this.afAuth.createUserWithEmailAndPassword(email,password);
-     const biografi=biografia;
-     const type=tipo;
-     
-     this.saveUserData(user,username, biografi,type);
-     await this.sendVerificationEmail();
-     return user;
-    }catch(error){
-      console.log(error);
+  async register(
+    email: string,
+    password: string,
+    username: string,
+    biografia: string,
+    tipo: string
+  ): Promise<any> {
+    try {
+      //Mete al usuario en firebase auth
+      const user = await this.afAuth.createUserWithEmailAndPassword(
+        email,
+        password
+      );
+      const biografi = biografia;
+      const type = tipo;
+
+      this.saveUserData(user, username, biografi, type);
+      await this.sendVerificationEmail();
+      return user;
+    } catch (error) {
+      throw error;
+      //console.log(error);
     }
   }
 
   //Método para mandar email de verificación
-  async sendVerificationEmail():Promise<void>{
-    try{
+  async sendVerificationEmail(): Promise<void> {
+    try {
       return (await this.afAuth.currentUser).sendEmailVerification();
-    }catch(error){
+    } catch (error) {
       console.log(error);
     }
   }
-  isEmailVerified(user:any){
-    if(user.emailVerified){
+  async isEmailVerified(user: any) {
+    if (user.user.emailVerified) {
       return true;
-    }else{
+    } else {
       return false;
     }
     //Con la asignación condicional no chuta y no se porque
     //return user.emailVerified = true ? true : false;
   }
 
-  //Método de login con email y contraseña 
-  async login(email:string ,password:string):Promise<any>{
-    try{
-     const user = await this.afAuth.signInWithEmailAndPassword(email,password);
-     //(`ususrios/${user.user.emailVerified}`);
-     //this.updateUser();
-    //  if (user.user.emailVerified){
-    //   const usuario=this.updateUser(user);
-    //   console.log(usuario)
-    //   return usuario;
-    //  }else {
+  //Método de login con email y contraseña
+  async login(email: string, password: string): Promise<any> {
+    try {
+      const user = await this.afAuth.signInWithEmailAndPassword(
+        email,
+        password
+      );
+      const us = this.updateUser(user);
       return user;
-     
-    }catch(error){
-     throw error;
+    } catch (error) {
+      throw error;
     }
   }
 
   //Método de cerrar sesión
-  async logout():Promise<void>{
-    try{
+  async logout(): Promise<void> {
+    try {
       await this.afAuth.signOut();
-    }catch(error){
+    } catch (error) {
       throw error;
       //console.log(error);
     }
   }
-  private updateUser(user:any){
-    console.log("usuraio",user);
-    const userRef:AngularFirestoreDocument<Usuario> = this.afs.doc(`usuarios/${user.uid}`);
-    //const algo=this.afs.doc<any>(`usuarios/${user.user.uid}`).valueChanges();
-    //this.user$=algo;
-  
-    user.isEmailVerified=true;
-    return  this.afs.doc(`usuarios/${user.user.uid}`).update(user);
-    /*const datos={
-      uid: user.user.uid,
-      username: user.username,
-      email: user.user.email,
-      emailVerified: user.user.emailVerified,
-      biografia: user.biografi
-    }*/
-    //console.log("datos",datos)
-    //return  userRef.set(datos,{merge:true});//await userRef.update(datos);
+  private async updateUser(user: any) {
+    return await this.afs
+      .doc(`usuarios/${user.user.uid}`)
+      .update({ emailVerified: user.user.emailVerified });
   }
 
   //Guarda el usuario en la base de datos
-  /*private updateUserDataGoogle(user:any){
-    const userRef:AngularFirestoreDocument<Usuario> = this.afs.doc(`usuarios/${user.uid}`);
-    const datos:Usuario={
-      uid:user.uid,
-      displayName:user.displayName,
-      email:user.email,
-      emailVerified: user.emailVerified,
-      isFirstTime:user.isFirstTime,
-      /*biografia:user.biografia,
-      contrasena:user.contrasena,
-      foto:user.foto,
-      username:user.username*/
-    /*}
-    
-    return userRef.set(datos,{merge:true});
-  }*/
-
-  //Guarda el usuario en la base de datos
-  private saveUserData(user:any,nameuser:string, biografi:string,type:string){
-    if(type=='Viajero'){
-      const userRef:AngularFirestoreDocument<Usuario> = this.afs.doc(`usuarios/${user.user.uid}`);
-      const datos:Viajero={
-        uid:user.user.uid,
-        username:nameuser,
-        email:user.user.email,
+  private saveUserData(
+    user: any,
+    nameuser: string,
+    biografi: string,
+    type: string
+  ) {
+    if (type == 'Viajero') {
+      const userRef: AngularFirestoreDocument<Usuario> = this.afs.doc(
+        `usuarios/${user.user.uid}`
+      );
+      const datos: Viajero = {
+        uid: user.user.uid,
+        username: nameuser,
+        email: user.user.email,
         emailVerified: user.user.emailVerified,
-        
-        biografia:biografi,
-        sitios:[]
+
+        biografia: biografi,
+        sitios: [],
         //foto:user.foto,
-      }
-      return userRef.set(datos,{merge:true});
+      };
+      return userRef.set(datos, { merge: true });
     }
-    if(type=='Guía'){
-      const userRef:AngularFirestoreDocument<Usuario> = this.afs.doc(`usuarios/${user.uid}`);
-      const datos:Guia={
-        uid:user.uid,
-        username:nameuser,
-        email:user.email,
+    if (type == 'Guía') {
+      const userRef: AngularFirestoreDocument<Usuario> = this.afs.doc(
+        `usuarios/${user.uid}`
+      );
+      const datos: Guia = {
+        uid: user.uid,
+        username: nameuser,
+        email: user.email,
         emailVerified: user.emailVerified,
-        biografia:biografi,
-        valoracionMedia:0.0
+        biografia: biografi,
+        valoracionMedia: 0.0,
         //foto:user.foto,
-      }
-      return userRef.set(datos,{merge:true});
+      };
+      return userRef.set(datos, { merge: true });
     }
   }
-  
 }

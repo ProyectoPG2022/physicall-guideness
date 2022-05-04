@@ -19,6 +19,10 @@
     <ion-input type="password" #password required></ion-input>
   </ion-item>
   <ion-item lines="full" class="m-2">
+    <ion-label position="floating">Confirmar contraseña</ion-label>
+    <ion-input type="password" #passwordCheck required></ion-input>
+  </ion-item>
+  <ion-item lines="full" class="m-2">
     <ion-label position="floating">Biografía</ion-label>
     <ion-textarea type="ion-textarea" #biografia required></ion-textarea>
   </ion-item>
@@ -33,7 +37,7 @@
 
   <ion-row>
     <ion-col>
-      <ion-button type="submit" class="m-2" (click)="onRegister(email, password, username, biografia,tipo)">Registrarse</ion-button>
+      <ion-button type="submit" class="m-2" (click)="onRegister(email, password, username, biografia,tipo,passwordCheck)">Registrarse</ion-button>
     </ion-col>
   </ion-row>
     <ion-row class="m-2">

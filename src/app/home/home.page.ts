@@ -12,28 +12,31 @@ import { AuthService } from '../auth.service';
 })
 export class HomePage implements OnInit {
   /*Para poder sacar el usuario de la bd hay que hacer un observable y devolver lo que encuentre*/
-  user$: Observable<any>=this.authSvc.afAuth.user;
-  constructor(private afAuth:AngularFireAuth ,private authSvc:AuthService,private afs: AngularFirestore) { 
-    this.user$ = this.afAuth.authState.pipe(switchMap((user)=>{
-      if (user){
-        return this.afs.doc<any>(`usuarios/${user.uid}`).valueChanges();
-      }
-      return of(null);
-    }));
+  user$: Observable<any> = this.authSvc.afAuth.user;
+  constructor(
+    private afAuth: AngularFireAuth,
+    private authSvc: AuthService,
+    private afs: AngularFirestore
+  ) {
+    this.user$ = this.afAuth.authState.pipe(
+      switchMap((user) => {
+        if (user) {
+          return this.afs.doc<any>(`usuarios/${user.uid}`).valueChanges();
+        }
+        return of(null);
+      })
+    );
   }
-   onLogOut(){
-     this.authSvc.logout();
+  onLogOut() {
+    this.authSvc.logout();
   }
 
   ngOnInit() {
-    
     const searchButton = document.getElementById('search-button');
     const searchInput = document.getElementById('search-input');
     searchButton.addEventListener('click', () => {
-    const inputValue = searchInput.nodeValue;
-    alert(inputValue);
-    
-});
+      const inputValue = searchInput.nodeValue;
+      alert(inputValue);
+    });
   }
-
 }

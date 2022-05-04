@@ -1,4 +1,4 @@
-<ion-header >
+<ion-header>
   <section class="d-flex justify-content-center">
     <div>
       <img id="logo" src="../../assets/icon/logo.png" alt="Logo" />
@@ -14,29 +14,44 @@
 
 <ion-content>
   <main class="d-flex flex-column">
-    
     <section id="buscador" class="mt-4">
       <div class="container h-100">
         <div class="d-flex justify-content-center h-100">
           <div class="searchbar">
-            <input class="search_input" type="text" name="" placeholder="Search...">
-            <a href="#" class="search_icon"><img src="../../assets/icon/search-icon.png" class="fas fa-search"></a>
+            <input
+              class="search_input"
+              type="text"
+              name=""
+              placeholder="Search..."
+            />
+            <a href="#" class="search_icon"
+              ><img
+                src="../../assets/icon/search-icon.png"
+                class="fas fa-search"
+            /></a>
           </div>
         </div>
       </div>
     </section>
     <section class="mt-4 align-self-center">
       <div *ngIf="user$ | async as user">
-      <p >{{user.username}}</p>
-      <button (click)="onLogOut()">Chau</button>
-    </div>
+        <p>{{user.username}}</p>
+        <button (click)="onLogOut()">Chau</button>
+      </div>
       <h2>Guías cerca de ti:</h2>
       <div id="guias-cercanos" class="container text-center">
         <div class="guia-card" style="width: 18rem">
-          <img id="img-guia" src="../../assets/" class="card-img-top" alt="..." />
+          <img
+            id="img-guia"
+            src="../../assets/"
+            class="card-img-top"
+            alt="..."
+          />
           <div class="guia-card-body">
-            <h5 id="nombre-guia" class="guia-card-title" >Juana Maria Fernandez Lopez</h5>
-            <p id="biografia-guia" class="guia-card-text" >Estudiante.</p>
+            <h5 id="nombre-guia" class="guia-card-title">
+              Juana Maria Fernandez Lopez
+            </h5>
+            <p id="biografia-guia" class="guia-card-text">Estudiante.</p>
             <a id="perfil-guia" href="#" class="btn btn-primary">Ver perfil</a>
           </div>
         </div>
