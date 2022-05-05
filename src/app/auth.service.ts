@@ -87,7 +87,7 @@ export class AuthService {
     }
   }
   async isEmailVerified(user: any) {
-    if (user.user.emailVerified) {
+    if (await user.user.emailVerified) {
       return true;
     } else {
       return false;
@@ -103,7 +103,7 @@ export class AuthService {
         email,
         password
       );
-      const us = this.updateUser(user);
+      this.updateUser(user);
       return user;
     } catch (error) {
       throw error;
@@ -126,7 +126,7 @@ export class AuthService {
   }
 
   //Guarda el usuario en la base de datos
-  private saveUserData(
+  private async saveUserData(
     user: any,
     nameuser: string,
     biografi: string,
@@ -146,7 +146,7 @@ export class AuthService {
         sitios: [],
         //foto:user.foto,
       };
-      return userRef.set(datos, { merge: true });
+      return await userRef.set(datos, { merge: true });
     }
     if (type == 'Guía') {
       const userRef: AngularFirestoreDocument<Usuario> = this.afs.doc(
