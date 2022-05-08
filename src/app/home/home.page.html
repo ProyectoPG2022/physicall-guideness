@@ -1,18 +1,24 @@
-<ion-header>
-  <section class="d-flex justify-content-center">
-    <div>
+
+<ion-header >
+  <section class="d-flex justify-content-evenly">
+    <div class="align-self-center">
+
       <img id="logo" src="../../assets/icon/logo.png" alt="Logo" />
     </div>
     <div>
-      <span>
-        <h1>Physicall</h1>
-        <h2>Guideness</h2>
+      <span class="titulo">
+        <h1>Physicall Guideness</h1>
       </span>
     </div>
   </section>
 </ion-header>
-
 <ion-content>
+  <ion-searchbar (ionInput)="getItems($event)" placeholder="Search..."></ion-searchbar>
+  <ion-list inset>
+    <button ion-item *ngFor="let datos of items" (click)="viewList(datos.id)">
+      {{datos.nombre}}
+    </button>
+  </ion-list>
   <main class="d-flex flex-column">
     <section id="buscador" class="mt-4">
       <div class="container h-100">
@@ -48,10 +54,9 @@
             alt="..."
           />
           <div class="guia-card-body">
-            <h5 id="nombre-guia" class="guia-card-title">
-              Juana Maria Fernandez Lopez
-            </h5>
-            <p id="biografia-guia" class="guia-card-text">Estudiante.</p>
+            <h3 id="nombre-guia" class="guia-card-title" >Juana Maria Fernandez Lopez</h3>
+            <p id="biografia-guia" class="guia-card-text" >Estudiante.</p>
+
             <a id="perfil-guia" href="#" class="btn btn-primary">Ver perfil</a>
           </div>
         </div>

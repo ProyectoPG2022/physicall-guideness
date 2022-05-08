@@ -1,6 +1,14 @@
+* {
+    font-family: cursive;
+}
+
 #logo{
     max-width: 100px;
     max-height: 100px;
+}
+
+.titulo{
+    
 }
 
 //Buscador
@@ -13,6 +21,8 @@
     background-color: #51bfff;
     border-radius: 30px;
     padding: 10px;
+    display: flex;
+    justify-content: space-between;
 }
 
 .search_input{
@@ -21,9 +31,12 @@
     outline: 0;
     background: none;
     min-width: 100px;
-    caret-color:rgb(255, 255, 255);
     line-height: 40px;
     padding: 0 10px;
+}
+
+.search_input::placeholder{
+    color: white;
 }
 
 .search_icon{
