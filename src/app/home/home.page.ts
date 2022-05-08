@@ -28,7 +28,6 @@ export class HomePage implements OnInit {
     timeout: 5000,
     maximumAge: 0
   }
-
   async success(pos) {
     var crd = pos.coords
 
@@ -87,7 +86,4 @@ export class HomePage implements OnInit {
 
     }
   }
-
-
-
 }

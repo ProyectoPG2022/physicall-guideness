@@ -1,0 +1,53 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Registro</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+<form class="formulario needs-validation" novalidate>
+  <ion-item lines="full" class="m-2">
+    <ion-label position="floating">Nombre de usuario</ion-label>
+    <ion-input type="text" #username required></ion-input>
+  </ion-item>
+  <ion-item lines="full" class="m-2">
+    <ion-label position="floating">Correo electronico</ion-label>
+    <ion-input type="text" #email required></ion-input>
+  </ion-item>
+  <ion-item lines="full" class="m-2">
+    <ion-label position="floating">Contraseña</ion-label>
+    <ion-input type="password" #password required></ion-input>
+  </ion-item>
+  <ion-item lines="full" class="m-2">
+    <ion-label position="floating">Confirmar contraseña</ion-label>
+    <ion-input type="password" #passwordCheck required></ion-input>
+  </ion-item>
+  <ion-item lines="full" class="m-2">
+    <ion-label position="floating">Biografía</ion-label>
+    <ion-textarea type="ion-textarea" #biografia required></ion-textarea>
+  </ion-item>
+  
+  <div class="m-2">
+    <p class="margin-top-2">Tipo de usuario</p>
+    <select class="form-select" #tipo aria-label="Default select example">
+      <option selected value="Viajero">Viajero</option>
+      <option value="Guía">Guia</option>
+    </select>
+  </div>
+
+  <ion-row>
+    <ion-col>
+      <ion-button type="submit" class="m-2" (click)="onRegister(email, password, username, biografia,tipo,passwordCheck)">Registrarse</ion-button>
+    </ion-col>
+  </ion-row>
+    <ion-row class="m-2">
+    <ion-col>
+      <p>
+        <a routerLink="/login">Ya tengo una cuenta de Physicall Guideness</a>
+      </p>
+    </ion-col>
+  </ion-row>
+</form>
+
+</ion-content>
+
