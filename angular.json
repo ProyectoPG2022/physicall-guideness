@@ -37,7 +37,7 @@
               }
             ],
             "styles": ["src/theme/variables.scss", "src/global.scss",
-              "node_modules/sweetalert2/src/sweetalert2.scss","node_modules/leaflet/dist/leaflet.css"
+              "node_modules/sweetalert2/src/sweetalert2.scss"
             ],
             "scripts": ["node_modules/sweetalert2/dist/sweetalert2.js"],
             
