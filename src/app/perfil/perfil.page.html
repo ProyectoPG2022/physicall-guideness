@@ -5,5 +5,49 @@
 </ion-header>
 
 <ion-content>
-<p>Contenido del perfil</p>
+  <form  *ngIf="user$$ | async as user ; else logout" (ngSubmit)="onSaveUser(profileForm.value)" [formGroup]="profileForm">
+    <ion-card >
+      <ion-card-header>
+        <img src="https://picsum.photos/id/113/150/150" />
+        <!--div class="label bottom">
+          <p>Cambiar</p>
+          <img [src]="currentImage" (click)="inputImageProfile.click()" />
+          <input hidden type="file" #inputImageProfile formControlName="photo"
+            (change)="handleImage(($event?.target?.files)[0])" />
+        </div-->
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <label>Nombre de usuario</label>
+          <input  placeholder="Name" formControlName="username" />
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Correo electronico</ion-label>
+          <input  placeholder="Email" formControlName="email" />
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Biografía</ion-label>
+          <input  placeholder="Email" formControlName="biografia" />
+        </ion-item>
+
+        <!--ion-item>
+          <ion-label>Correo electronico</ion-label>
+          <input matInput placeholder="Email" formControlName="" />
+        </ion-item-->
+        <div class="mat-dialog-actions">
+          <input
+            type="submit"
+            class="mat-flat-button"
+            value="Guardar cambios"
+          />
+        </div>
+        <button (click)="onLogOut()">Cerrar sesión</button>
+      </ion-card-content>
+    </ion-card>
+  </form>
+  <ng-template #logout>
+    <p>Vaya!!, parece que no estas logeado, vamos a cambiar eso xD</p>
+  </ng-template>
 </ion-content>

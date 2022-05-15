@@ -130,9 +130,9 @@ export class AuthService {
     user: any,
     nameuser: string,
     biografi: string,
-    type: string
+    tipo: string
   ) {
-    if (type == 'Viajero') {
+    if (tipo == 'Viajero') {
       const userRef: AngularFirestoreDocument<Usuario> = this.afs.doc(
         `usuarios/${user.user.uid}`
       );
@@ -141,27 +141,40 @@ export class AuthService {
         username: nameuser,
         email: user.user.email,
         emailVerified: user.user.emailVerified,
-
+        type: tipo,
         biografia: biografi,
         sitios: [],
-        //foto:user.foto,
       };
       return await userRef.set(datos, { merge: true });
     }
-    if (type == 'Guía') {
+    if (tipo == 'Guía') {
       const userRef: AngularFirestoreDocument<Usuario> = this.afs.doc(
-        `usuarios/${user.uid}`
+        `usuarios/${user.user.uid}`
       );
       const datos: Guia = {
-        uid: user.uid,
+        uid: user.user.uid,
         username: nameuser,
-        email: user.email,
-        emailVerified: user.emailVerified,
+        email: user.user.email,
+        emailVerified: user.user.emailVerified,
+        type: tipo,
         biografia: biografi,
         valoracionMedia: 0.0,
-        //foto:user.foto,
       };
-      return userRef.set(datos, { merge: true });
+      return await userRef.set(datos, { merge: true });
     }
+  }
+  async saveUserProfile(user: any) {
+    //Supongo que esto funcionará
+    //TODO: REvisar esto
+    console.log('Usuario', user);
+    const userRef: AngularFirestoreDocument<Usuario> = this.afs.doc(
+      `usuarios/${user.uid}`
+    );
+    const datos = {
+      username: user.username,
+      biografia: user.biografia,
+      photo: (user.photo)? user.photo:'',
+    };
+    return await userRef.update(datos);
   }
 }

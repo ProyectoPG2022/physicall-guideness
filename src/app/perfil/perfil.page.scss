@@ -1,0 +1,60 @@
+
+.label {
+  display: inline-block;
+  vertical-align: top;
+  overflow: hidden;
+  position: relative;
+  margin: 20px;
+  text-align: center;
+  border-radius: 50%;
+}
+
+p {
+  position: absolute;
+  width: 100%;
+  background: blueviolet;
+  color: white;
+  text-transform: uppercase;
+  transition: all 0.5s ease;
+}
+img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 2px solid white;
+  &:hover {
+    border: 2px solid blueviolet;
+    cursor: pointer;
+  }
+}
+
+.bottom {
+  p {
+    bottom: -50%;
+  }
+  &:hover p {
+    bottom: 0%;
+  }
+}
+
+ion-card-header {
+  display: flex;
+  justify-content: center;
+}
+
+ion-item,
+input.mat-flat-button {
+  //width: 60%;
+  display: block;
+  //margin: 0 auto;
+}
+input.mat-flat-button {
+  background: #7b1fa2;
+  padding: 0.4rem;
+  color: #fff;
+}
+.mat-dialog-actions {
+  width: 100%;
+  min-height: 150px;
+  margin-top: 3rem;
+}
