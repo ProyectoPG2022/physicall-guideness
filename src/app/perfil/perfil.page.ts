@@ -7,6 +7,7 @@ import { Archivo } from '../intefaces/archivo.interface';
 import Swal from 'sweetalert2';
 import { AngularDelegate } from '@ionic/angular';
 import { Router } from '@angular/router';
+import { windowTime } from 'rxjs/operators';
 
 @Component({
   selector: 'app-perfil',
@@ -17,7 +18,8 @@ export class PerfilPage implements OnInit {
   user$$: Observable<any> = this.authSvc.afAuth.user;
 
   public image: Archivo;
-  public currentImage = 'https://picsum.photos/id/113/150/150';
+  public currentImage =
+    './assets/user.png'; /*'https://picsum.photos/id/113/150/150';*/
 
   constructor(private authSvc: AuthService, private router: Router) {}
 
@@ -34,10 +36,14 @@ export class PerfilPage implements OnInit {
 
   onSaveUser(user: Usuario): void {
     console.log('usuario auth', user.uid);
+    if (user.photo == '') {
+      user.photo = this.currentImage;
+    }
     this.authSvc.preSaveUserProfile(user, this.image);
+    //window.location.reload();
   }
   private initFormValues(user: Usuario): void {
-    if (user.photo != "") {
+    if (user.photo != '') {
       this.currentImage = user.photo;
     }
     this.profileForm.patchValue({
@@ -52,8 +58,17 @@ export class PerfilPage implements OnInit {
     this.image = $event.target.files[0];
   }
   onLogOut() {
-    this.router.navigate(['home']);
-    this.authSvc.logout();
+    try {
+      this.router.navigate(['home']);
+      this.authSvc.logout();
+    } catch (error) {
+      const body = document.getElementsByTagName('body')[0];
+      Swal.fire({
+        icon: 'error',
+        title: 'Ha ocurrido un error al cerrar sesión',
+      });
+      body.classList.remove('swal2-height-auto');
+    }
     const body = document.getElementsByTagName('body')[0];
     Swal.fire({
       icon: 'success',

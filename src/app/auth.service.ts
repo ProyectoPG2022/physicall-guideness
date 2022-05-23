@@ -147,7 +147,7 @@ export class AuthService {
         type: tipo,
         biografia: biografi,
         sitios: [],
-        photo:''
+        photo:user.user.photo
       };
       return await userRef.set(datos, { merge: true });
     }
@@ -163,7 +163,7 @@ export class AuthService {
         type: tipo,
         biografia: biografi,
         valoracionMedia: 0.0,
-        photo:''
+        photo:user.user.photo
       };
       return await userRef.set(datos, { merge: true });
     }
