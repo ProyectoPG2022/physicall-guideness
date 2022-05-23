@@ -5,31 +5,43 @@
 </ion-header>
 
 <ion-content>
-  <form  *ngIf="user$$ | async as user ; else logout" (ngSubmit)="onSaveUser(profileForm.value)" [formGroup]="profileForm">
-    <ion-card >
+  <form
+    *ngIf="user$$ | async as user ; else logout"
+    (ngSubmit)="onSaveUser(profileForm.value)"
+    [formGroup]="profileForm"
+  >
+    <ion-card>
       <ion-card-header>
-        <img src="https://picsum.photos/id/113/150/150" />
-        <!--div class="label bottom">
+        <!--img src="https://picsum.photos/id/113/150/150" /-->
+        <div class="label bottom">
           <p>Cambiar</p>
-          <img [src]="currentImage" (click)="inputImageProfile.click()" />
-          <input hidden type="file" #inputImageProfile formControlName="photo"
-            (change)="handleImage(($event?.target?.files)[0])" />
-        </div-->
+          <img [src]="currentImage" (click)="imageProfile.click()" />
+          <input
+            hidden
+            type="file"
+            #imageProfile
+            formControlName="photo"
+            (change)="handleImage($event)"
+          />
+        </div>
       </ion-card-header>
       <ion-card-content>
         <ion-item>
-          <label>Nombre de usuario</label>
-          <input  placeholder="Name" formControlName="username" />
+          <ion-label>Nombre de usuario</ion-label>
+          <ion-input placeholder="Name" formControlName="username"></ion-input>
         </ion-item>
 
         <ion-item>
           <ion-label>Correo electronico</ion-label>
-          <input  placeholder="Email" formControlName="email" />
+          <ion-input placeholder="Email" formControlName="email"></ion-input>
         </ion-item>
 
         <ion-item>
           <ion-label>Biografía</ion-label>
-          <input  placeholder="Email" formControlName="biografia" />
+          <ion-textarea
+            placeholder="Email"
+            formControlName="biografia"
+          ></ion-textarea>
         </ion-item>
 
         <!--ion-item>
@@ -48,6 +60,11 @@
     </ion-card>
   </form>
   <ng-template #logout>
-    <p>Vaya!!, parece que no estas logeado, vamos a cambiar eso xD</p>
+    <h1>Vaya!!, parece que no has iniciado sesión, vamos a cambiar eso!!</h1>
+    <ion-row class="m-2">
+      <ion-col>
+        <a routerLink="/login">Ya tengo una cuenta de Physicall Guideness</a>
+      </ion-col>
+    </ion-row>
   </ng-template>
 </ion-content>

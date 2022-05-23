@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { switchMap } from 'rxjs/operators';
+import { finalize, switchMap } from 'rxjs/operators';
 import { Usuario } from './intefaces/usuario.interface';
 import {
   AngularFirestore,
@@ -10,17 +10,20 @@ import { Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { Viajero } from './intefaces/viajero.interface';
 import { Guia } from './intefaces/guia.interface';
+import { Archivo } from './intefaces/archivo.interface';
+import { AngularFireStorage } from '@angular/fire/compat/storage';
+import Swal from 'sweetalert2';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   public user$: Observable<Usuario>;
-
+  private filePath: string;
   constructor(
+    private strg: AngularFireStorage,
     public afAuth: AngularFireAuth,
-    private afs: AngularFirestore,
-    private router: Router
+    private afs: AngularFirestore
   ) {
     this.user$ = this.afAuth.authState.pipe(
       switchMap((user) => {
@@ -144,6 +147,7 @@ export class AuthService {
         type: tipo,
         biografia: biografi,
         sitios: [],
+        photo:''
       };
       return await userRef.set(datos, { merge: true });
     }
@@ -159,22 +163,56 @@ export class AuthService {
         type: tipo,
         biografia: biografi,
         valoracionMedia: 0.0,
+        photo:''
       };
       return await userRef.set(datos, { merge: true });
     }
   }
-  async saveUserProfile(user: any) {
+  private async saveUserProfile(user: any) {
     //Supongo que esto funcionará
     //TODO: REvisar esto
     console.log('Usuario', user);
-    const userRef: AngularFirestoreDocument<Usuario> = this.afs.doc(
-      `usuarios/${user.uid}`
-    );
-    const datos = {
-      username: user.username,
-      biografia: user.biografia,
-      photo: (user.photo)? user.photo:'',
-    };
-    return await userRef.update(datos);
+    try {
+      const userRef: AngularFirestoreDocument<Usuario> = this.afs.doc(
+        `usuarios/${user.uid}`
+      );
+      const datos = {
+        username: user.username,
+        biografia: user.biografia,
+        photo: user.photo,
+      };
+      return await userRef.update(datos);
+    } catch (error) {
+      const body = document.getElementsByTagName('body')[0];
+      Swal.fire({
+        icon: 'error',
+        title: 'Algo ha ido mal :(',
+        text: 'Por favor espere unos minutos es intentelo de nuevo',
+      });
+      body.classList.remove('swal2-height-auto');
+    }
+  }
+  preSaveUserProfile(user: Usuario, image?: Archivo): void {
+    if (image) {
+      this.uploadImage(user, image);
+    } else {
+      this.saveUserProfile(user);
+    }
+  }
+  private uploadImage(user: Usuario, image: Archivo): void {
+    this.filePath = `imagenes/${image.name}`;
+    const fileRef = this.strg.ref(this.filePath);
+    const task = this.strg.upload(this.filePath, image);
+    task
+      .snapshotChanges()
+      .pipe(
+        finalize(() => {
+          fileRef.getDownloadURL().subscribe((photoName) => {
+            user.photo = photoName;
+            this.saveUserProfile(user);
+          });
+        })
+      )
+      .subscribe();
   }
 }
