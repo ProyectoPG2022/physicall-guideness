@@ -39,7 +39,7 @@
         <ion-item>
           <ion-label>Biografía:</ion-label>
           <ion-textarea
-            placeholder="Email"
+            placeholder="Biografía"
             formControlName="biografia"
           ></ion-textarea>
         </ion-item>
@@ -49,18 +49,37 @@
           <input matInput placeholder="Email" formControlName="" />
         </ion-item-->
         <div class="mat-dialog-actions">
-          <ion-button
-            type="submit"
-          >Guardar cambios</ion-button>
+          <ion-button type="submit">Guardar cambios</ion-button>
         </div>
         <button (click)="onLogOut()">Cerrar sesión</button>
       </ion-card-content>
     </ion-card>
   </form>
+
+  <div *ngIf="userType =='Viajero'">
+    <p id="places">Lugares visitados</p>
+    <div class="row m-2" styles="justify-content:center">
+      <div     
+        *ngFor="let sitio of userPlaces"
+        class="card col-4"
+        style="width: 18rem;"
+      >
+        <ion-img src="..." class="card-img-top" alt="..."></ion-img>
+        <div class="card-body">
+          <h5 class="card-title">{{sitio.name}}</h5>
+          <p class="card-text">
+            Some quick example text to build on the card title and make up the
+            bulk of the card's content.
+          </p>
+          <a href="#" class="btn btn-primary">Go somewhere</a>
+        </div>
+      </div>
+    </div>
+  </div>
   <ng-template #logout>
     <div id="template" class="d-flex">
       <ion-img src="/assets/islita.png" alt="Playa"></ion-img>
-      <p id="message" >
+      <p id="message">
         Vaya, parece que no has iniciado sesión, vamos a cambiar eso!!
       </p>
       <ion-row class="m-2">

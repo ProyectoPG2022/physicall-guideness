@@ -5,9 +5,7 @@ import { AuthService } from '../auth.service';
 import { Usuario } from '../intefaces/usuario.interface';
 import { Archivo } from '../intefaces/archivo.interface';
 import Swal from 'sweetalert2';
-import { AngularDelegate } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { windowTime } from 'rxjs/operators';
 
 @Component({
   selector: 'app-perfil',
@@ -20,6 +18,9 @@ export class PerfilPage implements OnInit {
   public image: Archivo;
   public currentImage =
     './assets/user.png'; /*'https://picsum.photos/id/113/150/150';*/
+  public userType;
+  public userPlaces;
+  public userRatio;
 
   constructor(private authSvc: AuthService, private router: Router) {}
 
@@ -34,15 +35,23 @@ export class PerfilPage implements OnInit {
     this.authSvc.user$.subscribe((user) => this.initFormValues(user));
   }
 
-  onSaveUser(user: Usuario): void {
-    console.log('usuario auth', user.uid);
+  onSaveUser(user: any): void {
+    //console.log('usuario auth', user.uid);
     if (user.photo == '') {
       user.photo = this.currentImage;
     }
     this.authSvc.preSaveUserProfile(user, this.image);
     //window.location.reload();
   }
-  private initFormValues(user: Usuario): void {
+  private initFormValues(user: any): void {
+    this.userType = user.type;
+    if (user.type == 'Viajero') {
+      this.userPlaces = user.sitios;
+      console.log(this.userPlaces)
+    } else {
+      this.userRatio = user.valoracionMedia;
+    }
+
     if (user.photo != '') {
       this.currentImage = user.photo;
     }
@@ -59,21 +68,40 @@ export class PerfilPage implements OnInit {
   }
   onLogOut() {
     try {
-      this.router.navigate(['home']);
-      this.authSvc.logout();
+      const body = document.getElementsByTagName('body')[0];
+
+      Swal.fire({
+        title: '¿Estas seguro?',
+        text: 'Una vez cerrada sesión habrá que volver a iniciar sesión',
+        icon: 'warning',
+        showCancelButton: true,
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Cerrar sesión',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.router.navigate(['home']);
+          this.authSvc.logout();
+
+          const body = document.getElementsByTagName('body')[0];
+          Swal.fire({
+            icon: 'success',
+            text: 'Se ha cerrado sesión correctamente',
+          });
+          body.classList.remove('swal2-height-auto');
+        }
+      });
+
+      body.classList.remove('swal2-height-auto');
     } catch (error) {
       const body = document.getElementsByTagName('body')[0];
       Swal.fire({
         icon: 'error',
         title: 'Ha ocurrido un error al cerrar sesión',
+        text: 'Por favor, vuelva a intentarlo',
       });
       body.classList.remove('swal2-height-auto');
     }
-    const body = document.getElementsByTagName('body')[0];
-    Swal.fire({
-      icon: 'success',
-      title: 'Se ha cerrado sesión correctamente',
-    });
-    body.classList.remove('swal2-height-auto');
   }
 }

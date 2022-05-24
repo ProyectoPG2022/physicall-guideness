@@ -13,6 +13,7 @@ import { Guia } from './intefaces/guia.interface';
 import { Archivo } from './intefaces/archivo.interface';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import Swal from 'sweetalert2';
+import { Sitio } from './intefaces/sitio.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -139,6 +140,9 @@ export class AuthService {
       const userRef: AngularFirestoreDocument<Usuario> = this.afs.doc(
         `usuarios/${user.user.uid}`
       );
+      var places:Sitio []=[];
+      
+      places.push({name:"dfg"});
       const datos: Viajero = {
         uid: user.user.uid,
         username: nameuser,
@@ -146,8 +150,8 @@ export class AuthService {
         emailVerified: user.user.emailVerified,
         type: tipo,
         biografia: biografi,
-        sitios: [],
-        photo:user.user.photo
+        sitios: places,
+        photo:""
       };
       return await userRef.set(datos, { merge: true });
     }
@@ -163,15 +167,13 @@ export class AuthService {
         type: tipo,
         biografia: biografi,
         valoracionMedia: 0.0,
-        photo:user.user.photo
+        photo:""
       };
       return await userRef.set(datos, { merge: true });
     }
   }
   private async saveUserProfile(user: any) {
-    //Supongo que esto funcionará
-    //TODO: REvisar esto
-    console.log('Usuario', user);
+    //console.log('Usuario', user);
     try {
       const userRef: AngularFirestoreDocument<Usuario> = this.afs.doc(
         `usuarios/${user.uid}`
