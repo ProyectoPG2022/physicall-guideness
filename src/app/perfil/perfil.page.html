@@ -48,23 +48,24 @@
           <ion-label>Correo electronico</ion-label>
           <input matInput placeholder="Email" formControlName="" />
         </ion-item-->
-        <div class="mat-dialog-actions">
-          <ion-button type="submit">Guardar cambios</ion-button>
+        <div class="buttonsContainer">
+          <ion-button class="button" type="submit">Guardar cambios</ion-button>
+          <ion-button class="button" (click)="onLogOut()">Cerrar sesión</ion-button>
         </div>
-        <button (click)="onLogOut()">Cerrar sesión</button>
+        
       </ion-card-content>
     </ion-card>
   </form>
 
   <div *ngIf="userType =='Viajero'">
     <p id="places">Lugares visitados</p>
-    <div class="row m-2" styles="justify-content:center">
+    <div class="row m-2 cardContainer">
       <div     
         *ngFor="let sitio of userPlaces"
         class="card col-4"
         style="width: 18rem;"
       >
-        <ion-img src="..." class="card-img-top" alt="..."></ion-img>
+        <ion-img src="./assets/paisaje.jpg" class="card-img-top" styles="width:100%"alt="..."></ion-img>
         <div class="card-body">
           <h5 class="card-title">{{sitio.name}}</h5>
           <p class="card-text">

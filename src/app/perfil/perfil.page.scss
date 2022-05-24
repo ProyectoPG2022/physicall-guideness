@@ -52,10 +52,12 @@ input.mat-flat-button {
   padding: 0.4rem;
   color: #fff;
 }
-.mat-dialog-actions {
+.buttonsContainer {
+  display: flex;
   width: 100%;
   min-height: 150px;
   margin-top: 3rem;
+  justify-content: end;
 }
 #template {
   /*margin-bottom:vh;
@@ -66,32 +68,35 @@ input.mat-flat-button {
   align-items: center;
   justify-content: center;
 }
-#margin-button{
-  margin-top:2vh;
+#margin-button {
+  margin-top: 2vh;
 }
-#message{
+#message {
   margin-top: 3vh;
   font-size: 1.8em;
-  text-align:center ;
+  text-align: center;
 }
-#places{
-  font-size: 1.8em ;
+#places {
+  font-size: 1.8em;
   display: flex;
   justify-content: center;
 }
-#divCard{
+#divCard {
   align-items: center;
 }
-.card-title,.card-text{
+.card-title,
+.card-text {
   color: black !important;
 }
-.card{
-  margin:1vh;
+.card {
+  margin: 1vh;
 }
-.cardContainer{
-  display: grid;
-  justify-self: center;
-  justify-items: center;
-  align-self: center;
-
+.cardContainer {
+  justify-content: center;
+}
+.card{
+  padding: 0px;
+}
+.button{
+  width: 100%;
 }
