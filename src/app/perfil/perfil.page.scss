@@ -57,7 +57,10 @@ input.mat-flat-button {
   width: 100%;
   min-height: 150px;
   margin-top: 3rem;
-  justify-content: end;
+  justify-content: flex-end;
+  align-items: center;
+  align-content: center;
+  flex-wrap: wrap;
 }
 #template {
   /*margin-bottom:vh;
@@ -94,9 +97,32 @@ input.mat-flat-button {
 .cardContainer {
   justify-content: center;
 }
-.card{
+.card {
   padding: 0px;
 }
-.button{
+.button {
+  flex-wrap: content;
+}
+ion-item {
+  margin: 3vw;
+}
+.photoContainer {
+  justify-content: center;
   width: 100%;
 }
+.photoSize {
+  width: 50vw;
+}
+@media (max-width: 1000px) {
+  .photoSize {
+    width: 100%;
+  }
+}
+.photoSize:hover{
+  transition: transform 0.2s;
+  transform: scale(1.07);
+}
+.fa{
+  cursor: pointer;
+}
+

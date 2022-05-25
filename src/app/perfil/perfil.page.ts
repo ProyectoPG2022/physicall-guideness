@@ -6,6 +6,7 @@ import { Usuario } from '../intefaces/usuario.interface';
 import { Archivo } from '../intefaces/archivo.interface';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
+import { threadId } from 'worker_threads';
 
 @Component({
   selector: 'app-perfil',
@@ -18,9 +19,10 @@ export class PerfilPage implements OnInit {
   public image: Archivo;
   public currentImage =
     './assets/user.png'; /*'https://picsum.photos/id/113/150/150';*/
+  private generalUser;
   public userType;
   public userPlaces;
-  public userRatio;
+  public userUid;
 
   constructor(private authSvc: AuthService, private router: Router) {}
 
@@ -37,19 +39,54 @@ export class PerfilPage implements OnInit {
 
   onSaveUser(user: any): void {
     //console.log('usuario auth', user.uid);
-    if (user.photo == '') {
-      user.photo = this.currentImage;
-    }
-    this.authSvc.preSaveUserProfile(user, this.image);
-    //window.location.reload();
+    const body = document.getElementsByTagName('body')[0];
+
+    Swal.fire({
+      title: '¿Quieres guardar los cambios?',
+      showDenyButton: true,
+      showCancelButton: true,
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Guardar',
+      denyButtonText: `No guardar`,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if (user.photo == '') {
+          user.photo = this.currentImage;
+        }
+        this.authSvc.preSaveUserProfile(user, this.image);
+        //La foto se actualiza sola en unos segundos, pero quizás no, en caso de detectar que no se actualiza
+        //descomentar la linea de abajo
+        //window.location.reload();
+        const body = document.getElementsByTagName('body')[0];
+        Swal.fire('Datos guardados!', '', 'success');
+        body.classList.remove('swal2-height-auto');
+      } else if (result.isDenied) {
+        const body = document.getElementsByTagName('body')[0];
+        Swal.fire('Los cambios no se han guardado', '', 'info');
+        body.classList.remove('swal2-height-auto');
+      } else if (result.isDismissed) {
+        this.authSvc.user$.subscribe((user) => this.initFormValues(user));
+      }
+    });
+    body.classList.remove('swal2-height-auto');
   }
   private initFormValues(user: any): void {
+    this.generalUser = user;
+    this.userUid = user.uid;
     this.userType = user.type;
     if (user.type == 'Viajero') {
       this.userPlaces = user.sitios;
-      console.log(this.userPlaces)
+      console.log(this.userPlaces);
     } else {
-      this.userRatio = user.valoracionMedia;
+      const rating = user.valoracionMedia;
+
+      for (let i = 1; i <= rating; i++) {
+        document.getElementById(i + 'star').style.color = 'orange';
+      }
+      let paragraph = document
+        .getElementById('starsContainer')
+        .appendChild(document.createElement('p'));
+      paragraph.textContent = '' + rating;
     }
 
     if (user.photo != '') {

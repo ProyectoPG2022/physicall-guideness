@@ -140,9 +140,9 @@ export class AuthService {
       const userRef: AngularFirestoreDocument<Usuario> = this.afs.doc(
         `usuarios/${user.user.uid}`
       );
-      var places:Sitio []=[];
-      
-      places.push({name:"dfg"});
+      var places: Sitio[] = [];
+
+      places.push({ name: 'dfg' });
       const datos: Viajero = {
         uid: user.user.uid,
         username: nameuser,
@@ -151,7 +151,7 @@ export class AuthService {
         type: tipo,
         biografia: biografi,
         sitios: places,
-        photo:""
+        photo: '',
       };
       return await userRef.set(datos, { merge: true });
     }
@@ -159,6 +159,9 @@ export class AuthService {
       const userRef: AngularFirestoreDocument<Usuario> = this.afs.doc(
         `usuarios/${user.user.uid}`
       );
+
+      var places: Sitio[] = [];
+
       const datos: Guia = {
         uid: user.user.uid,
         username: nameuser,
@@ -167,7 +170,8 @@ export class AuthService {
         type: tipo,
         biografia: biografi,
         valoracionMedia: 0.0,
-        photo:""
+        sitios: places,
+        photo: '',
       };
       return await userRef.set(datos, { merge: true });
     }
