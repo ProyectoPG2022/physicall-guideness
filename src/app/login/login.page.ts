@@ -75,8 +75,7 @@ export class LoginPage implements OnInit {
           Swal.fire({
             icon: 'error',
             title: 'Algo ha ido mal :(',
-            text: '',
-            footer: 'Ejemplo de formato: correo@algo.com',
+            text: 'Por favor, intentelo de nuevo',
           });
           //No borar, po lo que dios mas quiera
           //Chapuza que resuelve quita la clase de altura del sweetalert pq no se veia

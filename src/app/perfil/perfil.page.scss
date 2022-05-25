@@ -1,0 +1,128 @@
+.label {
+  display: inline-block;
+  vertical-align: top;
+  overflow: hidden;
+  position: relative;
+  margin: 20px;
+  text-align: center;
+  border-radius: 50%;
+}
+
+#changePhoto {
+  position: absolute;
+  width: 100%;
+  background: blueviolet;
+  color: white;
+  text-transform: uppercase;
+  transition: all 0.5s ease;
+}
+img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 2px solid white;
+  &:hover {
+    border: 2px solid blueviolet;
+    cursor: pointer;
+  }
+}
+
+.bottom {
+  p {
+    bottom: -50%;
+  }
+  &:hover p {
+    bottom: 0%;
+  }
+}
+
+ion-card-header {
+  display: flex;
+  justify-content: center;
+}
+
+ion-item,
+input.mat-flat-button {
+  //width: 60%;
+  display: block;
+  //margin: 0 auto;
+}
+input.mat-flat-button {
+  background: #7b1fa2;
+  padding: 0.4rem;
+  color: #fff;
+}
+.buttonsContainer {
+  display: flex;
+  width: 100%;
+  min-height: 150px;
+  margin-top: 3rem;
+  justify-content: flex-end;
+  align-items: center;
+  align-content: center;
+  flex-wrap: wrap;
+}
+#template {
+  /*margin-bottom:vh;
+  margin-top: 10vh;*/
+  margin-left: 30vw;
+  margin-right: 30vw;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+#margin-button {
+  margin-top: 2vh;
+}
+#message {
+  margin-top: 3vh;
+  font-size: 1.8em;
+  text-align: center;
+}
+#places {
+  font-size: 1.8em;
+  display: flex;
+  justify-content: center;
+}
+#divCard {
+  align-items: center;
+}
+.card-title,
+.card-text {
+  color: black !important;
+}
+.card {
+  margin: 1vh;
+}
+.cardContainer {
+  justify-content: center;
+}
+.card {
+  padding: 0px;
+}
+.button {
+  flex-wrap: content;
+}
+ion-item {
+  margin: 3vw;
+}
+.photoContainer {
+  justify-content: center;
+  width: 100%;
+}
+.photoSize {
+  width: 50vw;
+}
+@media (max-width: 1000px) {
+  .photoSize {
+    width: 100%;
+  }
+}
+.photoSize:hover{
+  transition: transform 0.2s;
+  transform: scale(1.07);
+}
+.fa{
+  cursor: pointer;
+}
+

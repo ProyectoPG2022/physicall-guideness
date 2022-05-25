@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { switchMap } from 'rxjs/operators';
+import { finalize, switchMap } from 'rxjs/operators';
 import { Usuario } from './intefaces/usuario.interface';
 import {
   AngularFirestore,
@@ -10,17 +10,21 @@ import { Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { Viajero } from './intefaces/viajero.interface';
 import { Guia } from './intefaces/guia.interface';
+import { Archivo } from './intefaces/archivo.interface';
+import { AngularFireStorage } from '@angular/fire/compat/storage';
+import Swal from 'sweetalert2';
+import { Sitio } from './intefaces/sitio.interface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   public user$: Observable<Usuario>;
-
+  private filePath: string;
   constructor(
+    private strg: AngularFireStorage,
     public afAuth: AngularFireAuth,
-    private afs: AngularFirestore,
-    private router: Router
+    private afs: AngularFirestore
   ) {
     this.user$ = this.afAuth.authState.pipe(
       switchMap((user) => {
@@ -130,38 +134,91 @@ export class AuthService {
     user: any,
     nameuser: string,
     biografi: string,
-    type: string
+    tipo: string
   ) {
-    if (type == 'Viajero') {
+    if (tipo == 'Viajero') {
       const userRef: AngularFirestoreDocument<Usuario> = this.afs.doc(
         `usuarios/${user.user.uid}`
       );
+      var places: Sitio[] = [];
+
+      places.push({ name: 'dfg' });
       const datos: Viajero = {
         uid: user.user.uid,
         username: nameuser,
         email: user.user.email,
         emailVerified: user.user.emailVerified,
-
+        type: tipo,
         biografia: biografi,
-        sitios: [],
-        //foto:user.foto,
+        sitios: places,
+        photo: '',
       };
       return await userRef.set(datos, { merge: true });
     }
-    if (type == 'Guía') {
+    if (tipo == 'Guía') {
+      const userRef: AngularFirestoreDocument<Usuario> = this.afs.doc(
+        `usuarios/${user.user.uid}`
+      );
+
+      var places: Sitio[] = [];
+
+      const datos: Guia = {
+        uid: user.user.uid,
+        username: nameuser,
+        email: user.user.email,
+        emailVerified: user.user.emailVerified,
+        type: tipo,
+        biografia: biografi,
+        valoracionMedia: 0.0,
+        sitios: places,
+        photo: '',
+      };
+      return await userRef.set(datos, { merge: true });
+    }
+  }
+  private async saveUserProfile(user: any) {
+    //console.log('Usuario', user);
+    try {
       const userRef: AngularFirestoreDocument<Usuario> = this.afs.doc(
         `usuarios/${user.uid}`
       );
-      const datos: Guia = {
-        uid: user.uid,
-        username: nameuser,
-        email: user.email,
-        emailVerified: user.emailVerified,
-        biografia: biografi,
-        valoracionMedia: 0.0,
-        //foto:user.foto,
+      const datos = {
+        username: user.username,
+        biografia: user.biografia,
+        photo: user.photo,
       };
-      return userRef.set(datos, { merge: true });
+      return await userRef.update(datos);
+    } catch (error) {
+      const body = document.getElementsByTagName('body')[0];
+      Swal.fire({
+        icon: 'error',
+        title: 'Algo ha ido mal :(',
+        text: 'Por favor espere unos minutos es intentelo de nuevo',
+      });
+      body.classList.remove('swal2-height-auto');
     }
+  }
+  preSaveUserProfile(user: Usuario, image?: Archivo): void {
+    if (image) {
+      this.uploadImage(user, image);
+    } else {
+      this.saveUserProfile(user);
+    }
+  }
+  private uploadImage(user: Usuario, image: Archivo): void {
+    this.filePath = `imagenes/${image.name}`;
+    const fileRef = this.strg.ref(this.filePath);
+    const task = this.strg.upload(this.filePath, image);
+    task
+      .snapshotChanges()
+      .pipe(
+        finalize(() => {
+          fileRef.getDownloadURL().subscribe((photoName) => {
+            user.photo = photoName;
+            this.saveUserProfile(user);
+          });
+        })
+      )
+      .subscribe();
   }
 }

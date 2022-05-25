@@ -21,9 +21,7 @@ import { MarkerService } from './marker.service';
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule,  AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireAuthModule, HttpClientModule],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, MarkerService],
+
   bootstrap: [AppComponent],
-
-  
-
 })
 export class AppModule {}
