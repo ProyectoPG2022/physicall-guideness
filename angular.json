@@ -26,6 +26,11 @@
                 "output": "assets"
               },
               {
+                "glob": "**/*",
+                "input": "node_modules/leaflet/dist/images/",
+                "output": "./assets"
+              },
+              {
                 "glob": "**/*.svg",
                 "input": "node_modules/ionicons/dist/ionicons/svg",
                 "output": "./svg"
@@ -37,7 +42,8 @@
               }
             ],
             "styles": ["src/theme/variables.scss", "src/global.scss",
-              "node_modules/sweetalert2/src/sweetalert2.scss","node_modules/leaflet/dist/leaflet.css"
+              "node_modules/sweetalert2/src/sweetalert2.scss",
+              "./node_modules/leaflet/dist/leaflet.css"
             ],
             "scripts": ["node_modules/sweetalert2/dist/sweetalert2.js"],
             

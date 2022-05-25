@@ -1,12 +1,32 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
+import { MapServiceService } from '../map-service.service';
+import * as L from 'leaflet'
+import { MarkerService } from '../marker.service';
+
+const iconRetinaUrl = 'assets/marker-icon-2x.png';
+const iconUrl = 'assets/marker-icon.png';
+const shadowUrl = 'assets/marker-shadow.png';
+const iconDefault = L.icon({
+  iconRetinaUrl,
+  iconUrl,
+  shadowUrl,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  tooltipAnchor: [16, -28],
+  shadowSize: [41, 41]
+});
+L.Marker.prototype.options.icon = iconDefault;
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
 })
-export class HomePage implements OnInit {
+export class HomePage implements OnInit, AfterViewInit {
 
+  public str_placeholder:string
   public items: any; //Lista donde buscará el buscador
 
   public lista = [{ id: 1, nombre: "Murcia" },
@@ -17,10 +37,36 @@ export class HomePage implements OnInit {
   { id: 6, nombre: "Valladolid" }
   ]
 
-  constructor(public alertCtrl: AlertController) { }
+  private map;
+
+  constructor(public alertCtrl: AlertController, public mapService:MapServiceService, private markerService: MarkerService ) { 
+  }
+
+  private initMap(latitude, longitude):void{
+    this.map = L.map('map', {
+      center:[latitude, longitude],
+      zoom: 3
+    })
+
+    const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      minZoom: 1,
+      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a><br/> <a href="http://www.ieschirinos.com/">I.E.S. Ginés Perez Chirinos</a>'
+    })
+  
+    tiles.addTo(this.map)
+  }
+
+  ngAfterViewInit(): void {
+    this.geolocalizador()
+  }
 
   ngOnInit() {
-    this.geolocalizador()
+    this.str_placeholder = "¿A dónde quieres ir?"
+  }
+
+  buscar(event){
+    console.log(event)
   }
 
   options = {
@@ -28,62 +74,22 @@ export class HomePage implements OnInit {
     timeout: 5000,
     maximumAge: 0
   }
-  async success(pos) {
-    var crd = pos.coords
-
-    console.log('Tu posición actual es: ')
-    console.log('Latitude: ' + crd.latitude)
-    console.log('Longitude: ' + crd.longitude)
-    console.log('Más o menos ' + crd.accuracy + ' meters.')
-
-    const latitude = crd.latitude
-    const longitude = crd.longitude
-
-    var requestOptions = {
-      method: 'GET',
-    }
-    console.log("Resultado del fetch:")
-    fetch(`https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&apiKey=d595e96962364b8aa09e1c5ef06d5286`, requestOptions)
-        .then(response => response.json())
-        .then(result => console.log(result))
-        .catch(error => console.log('error', error))
-  }
-
-  error(err) {
-    console.warn('Error(' + err.code + '): ' + err.message)
-  }
-
-  geolocalizador() {
+  async geolocalizador() {
     if('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(this.success, this.error, this.options)
+      navigator.geolocation.getCurrentPosition(async (pos) => {
+        const latitude = pos.coords.latitude
+        const longitude = pos.coords.longitude
+        
+        this.initMap(latitude,longitude)
+
+       await this.mapService.getCityByCoords({latitude, longitude}).then((ciudad) => console.log(ciudad))
+       await this.markerService.makeCapitalMarkers(this.map)
+        
+      }, (err) => {
+        console.warn('Error(' + err.code + '): ' + err.message)
+      }, this.options)
     } else {
       alert("El navegador no soporta la geolocalización.")
-    }
-  }
-
-  initializeItems() {
-    this.items = this.lista;
-  }
-
-  async viewList(id) {
-    let vlista = this.lista.filter(function (e, i) { return e.id == id })[0]
-
-    let alert = await this.alertCtrl.create({
-      header: vlista.nombre,
-      buttons: ['OK']
-    })
-    await alert.present()
-  }
-
-  getItems(ev: any) {
-    this.initializeItems(); // Refrescar la colección por si ha habido cambios
-    let val = ev.target.value; // Obtenemos el valor del searchbar
-    //Comprobamos que la cadena no es vacía
-    if (val && val.trim() != '') {
-      this.items = this.items.filter((item) => {
-        return (item.nombre.toLowerCase().indexOf(val.toLowerCase()) > -1)
-      })
-
     }
   }
 }

@@ -2,62 +2,42 @@
     font-family: cursive;
 }
 
-#logo{
+#logo {
     max-width: 100px;
     max-height: 100px;
 }
 
-.titulo{
+.titulo {}
+
+// Buscador
+.wrapper {
+    background: #49a4f5;
+    padding: 2em 2em;
+    max-width: 900px;
+}
+
+.wrapper .search-input {
+    background: #fff;
+    width: 100%;
+    border-radius: 5px;
+    padding: 1em;
+}
+
+// Mapa página principal
+.map-container {
+    background-color: red;
+    position: relative;
+    height: 500px;
     
 }
 
-//Buscador
-
-.searchbar{
-    margin-bottom: auto;
-    margin-top: auto;
-    height: 3.7rem;
-    width: 100%;
-    background-color: #51bfff;
-    border-radius: 30px;
-    padding: 10px;
-    display: flex;
-    justify-content: space-between;
+.map-frame {
+    background-color: green;
+    border: 2px solid black;
+    height: 100%;
 }
 
-.search_input{
-    color: rgb(0, 0, 0);
-    border: 0;
-    outline: 0;
-    background: none;
-    min-width: 100px;
-    line-height: 40px;
-    padding: 0 10px;
-}
-
-.search_input::placeholder{
-    color: white;
-}
-
-.search_icon{
-    background: white;
-    height: 40px;
-    width: 40px;
-    float: right;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50%;
-    color:white;
-    text-decoration:none;
-}
-
-.fas {
-    width: 50%;
-    aspect-ratio: 1;
-    transition: width 0.2s ease-in-out;
-}
-
-.fas:hover {
-    width: 65%;
+#map {
+    background-color: black;
+    height: 100%;
 }
