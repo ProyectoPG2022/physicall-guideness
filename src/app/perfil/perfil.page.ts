@@ -5,8 +5,7 @@ import { AuthService } from '../auth.service';
 import { Usuario } from '../intefaces/usuario.interface';
 import { Archivo } from '../intefaces/archivo.interface';
 import Swal from 'sweetalert2';
-import { Router } from '@angular/router';
-import { threadId } from 'worker_threads';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-perfil',
@@ -23,8 +22,12 @@ export class PerfilPage implements OnInit {
   public userType;
   public userPlaces;
   public userUid;
+  public paragraph;
 
-  constructor(private authSvc: AuthService, private router: Router) {}
+  constructor(
+    private authSvc: AuthService,
+    private router: Router,
+  ) {}
 
   public profileForm = new FormGroup({
     username: new FormControl('', Validators.required),
@@ -78,15 +81,19 @@ export class PerfilPage implements OnInit {
       this.userPlaces = user.sitios;
       console.log(this.userPlaces);
     } else {
+      this.userPlaces = user.sitios;
       const rating = user.valoracionMedia;
 
       for (let i = 1; i <= rating; i++) {
         document.getElementById(i + 'star').style.color = 'orange';
       }
-      let paragraph = document
-        .getElementById('starsContainer')
-        .appendChild(document.createElement('p'));
-      paragraph.textContent = '' + rating;
+
+      if (!this.paragraph) {
+        this.paragraph = document
+          .getElementById('starsContainer')
+          .appendChild(document.createElement('p'));
+        this.paragraph.textContent = '' + rating;
+      }
     }
 
     if (user.photo != '') {

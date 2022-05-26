@@ -48,8 +48,8 @@
           <ion-label>Correo electronico</ion-label>
           <input matInput placeholder="Email" formControlName="" />
         </ion-item-->
-        
-        <div id="starsContainer" class="col-12" style="text-align:center;">
+
+        <div id="starsContainer" class="col-12" style="text-align: center">
           <p>Mi valoración como guía :)</p>
           <span class="fa fa-star m-1" id="1star"></span>
           <span class="fa fa-star m-1" id="2star"></span>
@@ -68,7 +68,7 @@
   </form>
 
   <div *ngIf="userType =='Viajero'">
-    <p id="places">Lugares visitados</p>
+    <p class="places">Lugares visitados</p>
     <div class="row m-2 cardContainer">
       <div
         *ngFor="let sitio of userPlaces"
@@ -76,7 +76,31 @@
         style="width: 18rem"
       >
         <ion-img
-          src="./assets/paisaje.jpg"
+          src="./assets/images/paisaje.jpg"
+          class="card-img-top"
+          styles="width:100%"
+          alt="Paisaje"
+        ></ion-img>
+        <div class="card-body">
+          <h5 class="card-title">{{sitio.name}}</h5>
+          <p class="card-text">Visitado el: 9/1/2022</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="userType =='Guía'">
+    <p class="places m-2">Lugares asignados como guía</p>
+    <div class="row m-2 cardContainer">
+      <div *ngIf="userPlaces.length <= 0">
+        <p class="places m-2">No estas asignado a ningún lugar :(</p>
+      </div>
+      <div
+        *ngFor="let sitio of userPlaces"
+        class="card col-4"
+        style="width: 18rem"
+      >
+        <ion-img
+          src="./assets/images/paisaje.jpg"
           class="card-img-top"
           styles="width:100%"
           alt="Paisaje"
@@ -90,7 +114,7 @@
   </div>
 
   <div *ngIf="userType =='Guía'">
-    <p id="places" class="m-2">
+    <p class="m-2 places">
       ¿Necesitas ayuda para ser un buen guía? Haz click en la imagen
     </p>
     <div class="row m-2 photoContainer">
@@ -98,14 +122,17 @@
         class="photoSize"
         href="https://www.educaweb.com/profesion/guia-turistico-212/"
         target="_blank"
-        ><ion-img src="./assets/guiaturistico.png" alt="Foto de guía"></ion-img
+        ><ion-img
+          src="./assets/images/guiaturistico.png"
+          alt="Foto de guía"
+        ></ion-img
       ></a>
     </div>
   </div>
 
   <ng-template #logout>
     <div id="template" class="d-flex">
-      <ion-img src="/assets/islita.png" alt="Playa"></ion-img>
+      <ion-img src="/assets/images/islita.png" alt="Playa"></ion-img>
       <p id="message">
         Vaya, parece que no has iniciado sesión, vamos a cambiar eso!!
       </p>

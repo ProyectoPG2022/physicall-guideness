@@ -221,4 +221,7 @@ export class AuthService {
       )
       .subscribe();
   }
+  public getOneGuia(id:string): Observable<Usuario> {
+    return this.afs.doc<Usuario>(`usuarios/${id}`).valueChanges();
+  }
 }
