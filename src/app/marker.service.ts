@@ -14,20 +14,6 @@ export interface ZipFile {
   readonly data: any
 }
 
-/*
- {
-    "city": "Madrid", 
-    "lat": "40.4167", 
-    "lng": "-3.7167", 
-    "country": "Spain", 
-    "iso2": "ES", 
-    "admin_name": "Madrid", 
-    "capital": "primary", 
-    "population": "6026000", 
-    "population_proper": "3266126"
-  },
-*/
-
 export interface Ciudad {
   city: string,
   lat: string,
@@ -40,9 +26,21 @@ export interface Ciudad {
   population_proper: string
 }
 
+function crearIcono(str_urlIcon: string): any {
+  return L.icon({
+    iconUrl: str_urlIcon,
+    shadowUrl: '../assets/data/marker_icons/shadow.png',
+    iconSize: [38, 95], // size of the icon
+    shadowSize: [50, 64], // size of the shadow
+    iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
+    shadowAnchor: [4, 62],  // the same for the shadow
+    popupAnchor: [-3, -76] // point from which the popup should open relative to the iconAnchor
+  })
+}
 
+var redLeafIcon = crearIcono('../assets/data/marker_icons/red.png')
 
- 
+var greenLeafIcon = crearIcono('../assets/data/marker_icons/green.png')
 
 @Injectable({
   providedIn: 'root'
@@ -59,29 +57,31 @@ export class MarkerService {
   greenIcon = L.icon({
     iconUrl: '../assets/data/marker_icons/green.png',
     shadowUrl: '../assets/data/marker_icons/shadow.png',
-  
-    iconSize:     [38, 95], // size of the icon
-    shadowSize:   [50, 64], // size of the shadow
-    iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+
+    iconSize: [38, 95], // size of the icon
+    shadowSize: [50, 64], // size of the shadow
+    iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
     shadowAnchor: [4, 62],  // the same for the shadow
-    popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+    popupAnchor: [-3, -76] // point from which the popup should open relative to the iconAnchor
   });
 
-  async makeCapitalMarkers(map: L.Map) {
+  async getCitiesMarkersGTPopulation(population: number) {
+
+    var marcadores : L.Marker[] = []
+
     this.httpClient.get(this.citiesSpain).subscribe((res: Ciudad[]) => {
-      console.log("resultado: " + res)
-      res.forEach(ciudad => {
-        console.log("Ciudad: " + ciudad.city)
-        console.log(ciudad)
-        if(Number(ciudad.population) > 50000) { // Solo agregamos las ciudades con una población superior a 50.000
-          L.marker([Number(ciudad.lat), Number(ciudad.lng)], {icon: this.greenIcon}).addTo(map) // Creamos el marcador y lo agregamos al mapa
+      res.forEach((ciudad, index) => {
+        if (Number(ciudad.population) > population) { // 
+          var mark = L.marker([Number(ciudad.lat), Number(ciudad.lng)], { icon: redLeafIcon }) // Creamos el marcador y lo agregamos a la capa de ciudades
+          marcadores[index] = mark
         }
-        
-        //const marker = L.marker([Number(ciudad.lat),Number(ciudad.lng)])
-        //marker.addTo(map)
       });
     });
+    return marcadores
   }
+
+  // TODO Función que devuelve los puntos cercanos en un radio pasado por parámetro
+  
 
   ngOnfile(event: any): void {
     const fileList = event.target.files;
@@ -96,9 +96,5 @@ export class MarkerService {
 
   ngOnUpload(data: any) {
     console.log("ngOnUpload")
-  }
-
-  cargarCiudades() {
-    this.httpClient.get("assets/data/cities/${ciudad}") // Todo
   }
 }
