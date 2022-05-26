@@ -1,22 +1,21 @@
 <ion-header no-border>
-  <section class="d-flex justify-content-evenly">
-    <div class="align-self-center">
+  <ion-toolbar>
+    <section class="d-flex justify-content-evenly">
+      <div class="align-self-center">
 
-      <img id="logo" src="../../assets/icon/logo.png" alt="Logo" />
-    </div>
-    <div>
-      <span class="titulo">
-        <h1>Physicall Guideness</h1>
-      </span>
-    </div>
-  </section>
+        <img id="logo" src="../../assets/icon/logo.png" alt="Logo" />
+      </div>
+      <div>
+        <span class="titulo">
+          <h1>Physicall Guideness</h1>
+        </span>
+      </div>
+    </section>
+  </ion-toolbar>
 </ion-header>
 <ion-content [fullscreen]="true">
-  <ion-searchbar 
-  [placeholder]="str_placeholder"
-  (ionChange)="buscar($event)"
-  ></ion-searchbar>
-  
+  <ion-searchbar [placeholder]="str_placeholder"></ion-searchbar>
+
   <main class="col">
     <section class="mt-4 align-self-center p-4">
       <h2>Guías cerca de ti:</h2>
