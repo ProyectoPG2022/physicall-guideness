@@ -3,6 +3,9 @@ import { AlertController } from '@ionic/angular';
 import { MapServiceService } from '../map-service.service';
 import * as L from 'leaflet'
 import { MarkerService } from '../marker.service';
+import { AuthService } from '../auth.service';
+import { Observable } from 'rxjs';
+import { Marcador } from '../intefaces/marcador.interface';
 
 @Component({
   selector: 'app-home',
@@ -11,30 +14,54 @@ import { MarkerService } from '../marker.service';
 })
 export class HomePage implements OnInit, AfterViewInit {
 
+  user$$: Observable<any> = this.authSvc.afAuth.user;
+
   public str_placeholder: string
 
-  private map;
+  private map: L.LayerGroup<any> | L.Map;
+  public mapControl : L.Control.Layers
+  
+  public controlPoblacion: number
 
-  constructor(public alertCtrl: AlertController, public mapService: MapServiceService, private markerService: MarkerService) {
+
+  constructor(public alertCtrl: AlertController,
+    public mapService: MapServiceService,
+    private markerService: MarkerService,
+    private authSvc: AuthService) {
+    this.controlPoblacion = 20000
   }
 
   async initMap(latitude: number, longitude: number) {
+    // Se crea el mapa con un centro y un zoom predeterminado
     this.map = L.map('map', {
       center: [latitude, longitude],
       zoom: 9
     })
 
-    const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    // Se crean unos detalles del mapa y se añaden
+    const copyright = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
       minZoom: 1,
-      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a><br/> <a href="http://www.ieschirinos.com/">I.E.S. Ginés Perez Chirinos</a>'
-    })
+      attribution: '&copy; <a href="http://www.ieschirinos.com/">I.E.S. Ginés Perez Chirinos</a>'
+    }).addTo(this.map)
 
-    tiles.addTo(this.map)
+    // Se crea el control al que añadiremos las diferentes capas y lo añadimos al mapa
+    this.mapControl = L.control.layers().addTo(this.map)
+
+    // Se obtiene la layer con los marcadores de las ciudades con una población mayor al parámetro y se agrega al control
+    var layerGroup_CitiesGTPopulation = await this.markerService.getCitiesMarkersGTPopulation(this.controlPoblacion)
+    this.mapControl.addOverlay(layerGroup_CitiesGTPopulation, "<span style='color: gray'>Ciudades</span>")
+
+    // Se obtienen los marcadores de firebase
+    var marcadores = await this.markerService.getMarkersFirebase()
+    this.mapControl.addOverlay(marcadores, "<span style='color: gray'>Guias cercanos</span>")
   }
 
   ngAfterViewInit(): void {
-    this.geolocalizador()
+    //Comprobar antes de lanzar esta función si está el usuario logueado o no
+    this.authSvc.user$.subscribe(() => {
+      this.geolocalizador()
+    })
   }
 
   ngOnInit() {
@@ -59,7 +86,6 @@ export class HomePage implements OnInit, AfterViewInit {
         const lngBullas = -1.7229798
         // cambiar estos números por latitude y longitud
         await this.initMap(latBullas, lngBullas)
-        var marcadores = await this.markerService.getCitiesMarkersGTPopulation(50000)
 
         let city = await this.mapService.getCityByCoords(latBullas, lngBullas)
 
