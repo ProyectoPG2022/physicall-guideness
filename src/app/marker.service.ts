@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 
 import * as JSZip from 'jszip/dist/jszip'
 import { from, Observable, of } from 'rxjs';
@@ -10,6 +10,8 @@ import * as L from 'leaflet'
 import { Ciudad } from './intefaces/ciudad.interface';
 import { Marcador } from './intefaces/marcador.interface';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
+
+import { PopupComponent } from './popup/popup.component';
 
 export interface ZipFile {
   readonly name: string
@@ -34,9 +36,7 @@ var redLeafIcon = crearIcono('../assets/data/marker_icons/red.png')
 
 var greenLeafIcon = crearIcono('../assets/data/marker_icons/green.png')
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class MarkerService {
 
   citiesSpain: string = '../assets/data/cities/spain.json'
@@ -46,7 +46,7 @@ export class MarkerService {
 
   $zipFiles: Observable<ZipFile[]>
 
-  constructor(private httpClient: HttpClient, private database: AngularFirestore) {}
+  constructor(private httpClient: HttpClient, private firebaseDB: AngularFirestore, injector: Injector) {}
 
   greenIcon = L.icon({
     iconUrl: '../assets/data/marker_icons/green.png',
@@ -70,21 +70,38 @@ export class MarkerService {
     })
     return cities
   }
-
+/**
+    descripcion:string
+    userid:string
+    latitud?:string
+    longitud?:string
+    pais?:string
+    ciudad?:string
+*/
   async getMarkersFirebase() {
-    const collection = this.database.collection<Marcador>('marcadores')
+    var collection = this.firebaseDB.collection<Marcador>('marcadores')
     var grupo = L.layerGroup()
     collection.valueChanges().subscribe((res => {
       res.forEach((marcador) => {
-        L.marker([Number(marcador.latitud),Number(marcador.longitud)], {icon: greenLeafIcon}).addTo(grupo)
+        var pos = new L.LatLng(Number(marcador.latitud),Number(marcador.longitud)) // Guardamos la posición en una variable para reusabilidad
+        var marker = L.marker(pos, {icon: greenLeafIcon}) // Creamos el marcador en esa posición, verde para usuarios
+
+        marker.addTo(grupo).on({
+          mouseover: function(e) {
+            this.openPopup()
+          }
+        }).bindPopup((layer) => {
+          const popupEl = document.createElement('popup-element') as any;
+          popupEl.titulo = `${marcador.descripcion}`
+          popupEl.guias = marcador.guias
+          return popupEl
+        })
       })
     }))
     return grupo
   }
 
   // TODO Función que devuelve los puntos cercanos en un radio pasado por parámetro
-
-
 
   ngOnfile(event: any): void {
     const fileList = event.target.files;
