@@ -1,6 +1,8 @@
 <ion-header no-border>
-  <section class="d-flex justify-content-evenly">
-    <div class="align-self-center">
+  <ion-toolbar>
+    <section class="d-flex justify-content-evenly">
+      <div class="align-self-center">
+
 
       <img id="logo" src="../../assets/icon/favicon.png" alt="Logo" />
     </div>
@@ -10,19 +12,19 @@
       </span>
     </div>
   </section>
+  </ion-toolbar>
 </ion-header>
 <ion-content [fullscreen]="true">
-  <ion-searchbar 
-  [placeholder]="str_placeholder"
-  (ionChange)="buscar($event)"
-  ></ion-searchbar>
-  
+  <ion-searchbar [placeholder]="str_placeholder"></ion-searchbar>
+
   <main class="col">
     <section class="mt-4 align-self-center p-4">
-      <h2>Guías cerca de ti:</h2>
-      <div class="map-container">
-        <div class="map-frame">
-          <div id="map"></div>
+      <div id="userLogged" *ngIf="user$$ | async as user ; else nouserlogged">
+        <h2>Guías cerca de ti:</h2>
+        <div class="map-container">
+          <div class="map-frame">
+            <div id="map"></div>
+          </div>
         </div>
       </div>
       <div id="guias-cercanos" class="container text-center">
@@ -37,5 +39,10 @@
         </div>
       </div>
     </section>
+
+    <ng-template #nouserlogged>
+      <p>Para poder acceder al mapa tienes que iniciar sesión.</p>
+    </ng-template>
+    
   </main>
 </ion-content>
