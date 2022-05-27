@@ -13,7 +13,7 @@ import { Guia } from './intefaces/guia.interface';
 import { Archivo } from './intefaces/archivo.interface';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import Swal from 'sweetalert2';
-import { Sitio } from './intefaces/sitio.interface';
+import { Marcador } from './intefaces/marcador.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -140,9 +140,9 @@ export class AuthService {
       const userRef: AngularFirestoreDocument<Usuario> = this.afs.doc(
         `usuarios/${user.user.uid}`
       );
-      var places: Sitio[] = [];
+      var places: Marcador[] = [];
 
-      places.push({ name: 'dfg' });
+      places.push({ descripcion: `Casa de ${nameuser}`, userid: user.user.uid });
       const datos: Viajero = {
         uid: user.user.uid,
         username: nameuser,
@@ -160,7 +160,7 @@ export class AuthService {
         `usuarios/${user.user.uid}`
       );
 
-      var places: Sitio[] = [];
+      var places: Marcador[] = [];
 
       const datos: Guia = {
         uid: user.user.uid,

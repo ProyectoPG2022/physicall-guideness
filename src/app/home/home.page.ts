@@ -3,21 +3,9 @@ import { AlertController } from '@ionic/angular';
 import { MapServiceService } from '../map-service.service';
 import * as L from 'leaflet'
 import { MarkerService } from '../marker.service';
-
-const iconRetinaUrl = 'assets/marker-icon-2x.png';
-const iconUrl = 'assets/marker-icon.png';
-const shadowUrl = 'assets/marker-shadow.png';
-const iconDefault = L.icon({
-  iconRetinaUrl,
-  iconUrl,
-  shadowUrl,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  tooltipAnchor: [16, -28],
-  shadowSize: [41, 41]
-});
-L.Marker.prototype.options.icon = iconDefault;
+import { AuthService } from '../auth.service';
+import { Observable } from 'rxjs';
+import { Marcador } from '../intefaces/marcador.interface';
 
 @Component({
   selector: 'app-home',
@@ -26,48 +14,63 @@ L.Marker.prototype.options.icon = iconDefault;
 })
 export class HomePage implements OnInit, AfterViewInit {
 
-  public str_placeholder:string
-  public items: any; //Lista donde buscará el buscador
+  user$$: Observable<any> = this.authSvc.afAuth.user;
 
-  public lista = [{ id: 1, nombre: "Murcia" },
-  { id: 2, nombre: "Compostela" },
-  { id: 3, nombre: "Sevilla" },
-  { id: 4, nombre: "Bilbao" },
-  { id: 5, nombre: "León" },
-  { id: 6, nombre: "Valladolid" }
-  ]
+  public str_placeholder: string
 
-  private map;
+  private map: L.LayerGroup<any> | L.Map;
+  public mapControl : L.Control.Layers
+  
+  public controlPoblacion: number
 
-  constructor(public alertCtrl: AlertController, public mapService:MapServiceService, private markerService: MarkerService ) { 
+
+  constructor(public alertCtrl: AlertController,
+    public mapService: MapServiceService,
+    private markerService: MarkerService,
+    private authSvc: AuthService) {
+    this.controlPoblacion = 20000
   }
 
-  private initMap(latitude, longitude):void{
+  async initMap(latitude: number, longitude: number) {
+    // Se crea el mapa con un centro y un zoom predeterminado
     this.map = L.map('map', {
-      center:[latitude, longitude],
-      zoom: 3
+      center: [latitude, longitude],
+      zoom: 9
     })
 
-    const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    // Se crean unos detalles del mapa y se añaden
+    const copyright = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
       minZoom: 1,
-      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a><br/> <a href="http://www.ieschirinos.com/">I.E.S. Ginés Perez Chirinos</a>'
-    })
-  
-    tiles.addTo(this.map)
+      attribution: '&copy; <a href="http://www.ieschirinos.com/">I.E.S. Ginés Perez Chirinos</a>'
+    }).addTo(this.map)
+
+    // Se crea el control al que añadiremos las diferentes capas y lo añadimos al mapa
+    this.mapControl = L.control.layers().addTo(this.map)
+
+    // Se obtiene la layer con los marcadores de las ciudades con una población mayor al parámetro y se agrega al control
+    var layerGroup_CitiesGTPopulation = await this.markerService.getCitiesMarkersGTPopulation(this.controlPoblacion)
+    this.mapControl.addOverlay(layerGroup_CitiesGTPopulation, "<span style='color: gray'>Ciudades</span>")
+
+    // Se obtienen los marcadores de firebase
+    var marcadores = await this.markerService.getMarkersFirebase()
+    this.mapControl.addOverlay(marcadores, "<span style='color: gray'>Guias cercanos</span>")
   }
 
   ngAfterViewInit(): void {
-    this.geolocalizador()
+    //Comprobar antes de lanzar esta función si está el usuario logueado o no
+    this.authSvc.user$.subscribe(() => {
+      this.geolocalizador()
+    })
   }
 
   ngOnInit() {
     this.str_placeholder = "¿A dónde quieres ir?"
   }
 
-  buscar(event){
+  /*buscar(event) {
     console.log(event)
-  }
+  }*/
 
   options = {
     enablehighAccuracy: true,
@@ -75,16 +78,18 @@ export class HomePage implements OnInit, AfterViewInit {
     maximumAge: 0
   }
   async geolocalizador() {
-    if('geolocation' in navigator) {
+    if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(async (pos) => {
         const latitude = pos.coords.latitude
         const longitude = pos.coords.longitude
-        
-        this.initMap(latitude,longitude)
+        const latBullas = 38.0467272
+        const lngBullas = -1.7229798
+        // cambiar estos números por latitude y longitud
+        await this.initMap(latBullas, lngBullas)
 
-       await this.mapService.getCityByCoords({latitude, longitude}).then((ciudad) => console.log(ciudad))
-       await this.markerService.makeCapitalMarkers(this.map)
-        
+        let city = await this.mapService.getCityByCoords(latBullas, lngBullas)
+
+        console.log(city)
       }, (err) => {
         console.warn('Error(' + err.code + '): ' + err.message)
       }, this.options)

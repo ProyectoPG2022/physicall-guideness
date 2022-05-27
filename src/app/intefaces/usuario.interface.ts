@@ -1,4 +1,4 @@
-import { Sitio } from "./sitio.interface";
+import { Marcador } from "./marcador.interface";
 
 export interface Usuario{
     uid?:string;
@@ -8,5 +8,5 @@ export interface Usuario{
     biografia?:string,
     type?:string,
     photo?:string,
-    sitios :Sitio [];
+    sitios :Marcador [];
 }
