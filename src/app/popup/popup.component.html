@@ -1,0 +1,5 @@
+<h4>{{titulo}}</h4>
+<ul class="list-group" *ngFor="let guia of guiasPopup">
+  <li class="list-item">{{guia.username}}</li>
+  <li class="list-item" routerLink="/perfil/{{guia.uid}}">Ver perfil</li>
+</ul>

@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { MapServiceService } from '../map-service.service';
 import * as L from 'leaflet'
+import '../lib/L.Control.Range-min.js'
 import { MarkerService } from '../marker.service';
 import { AuthService } from '../auth.service';
 import { Observable } from 'rxjs';
@@ -19,8 +20,8 @@ export class HomePage implements OnInit, AfterViewInit {
   public str_placeholder: string
 
   private map: L.LayerGroup<any> | L.Map;
-  public mapControl : L.Control.Layers
-  
+  public mapControl: L.Control.Layers
+
   public controlPoblacion: number
 
 
@@ -35,7 +36,12 @@ export class HomePage implements OnInit, AfterViewInit {
     // Se crea el mapa con un centro y un zoom predeterminado
     this.map = L.map('map', {
       center: [latitude, longitude],
-      zoom: 9
+      zoom: 9,
+      zoomSnap: 0.5,  // Obliga al zoom a ser siempre un múltiplo del valor pasado
+      zoomDelta: 0.5, // Obliga al zoom con la rueda que siempre se agregue o se reste la cantidad pasada por valor
+      dragging: true, // Permite que el mapa sea "arrastrable"
+      boxZoom: true,  // Permite hacer zoom con shift + "click izquierdo mantenido" para seleccionar la zona a la que haremos zoom
+      minZoom: 8,     // El mínimo zoom al que se alejará el mapa
     })
 
     // Se crean unos detalles del mapa y se añaden
@@ -53,9 +59,11 @@ export class HomePage implements OnInit, AfterViewInit {
     this.mapControl.addOverlay(layerGroup_CitiesGTPopulation, "<span style='color: gray'>Ciudades</span>")
 
     // Se obtienen los marcadores de firebase
-    var marcadores = await this.markerService.getMarkersFirebase()
-    this.mapControl.addOverlay(marcadores, "<span style='color: gray'>Guias cercanos</span>")
+    var marcadoresGuiasCercanos = await this.markerService.getMarkersFirebase()
+    this.mapControl.addOverlay(marcadoresGuiasCercanos, "<span style='color: gray'>Guias cercanos</span>")
+    this.map.addControl(this.mapControl)
   }
+
 
   ngAfterViewInit(): void {
     //Comprobar antes de lanzar esta función si está el usuario logueado o no

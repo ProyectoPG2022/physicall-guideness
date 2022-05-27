@@ -140,9 +140,7 @@ export class AuthService {
       const userRef: AngularFirestoreDocument<Usuario> = this.afs.doc(
         `usuarios/${user.user.uid}`
       );
-      var places: Marcador[] = [];
 
-      places.push({ descripcion: `Casa de ${nameuser}`, userid: user.user.uid });
       const datos: Viajero = {
         uid: user.user.uid,
         username: nameuser,
@@ -160,7 +158,7 @@ export class AuthService {
         `usuarios/${user.user.uid}`
       );
 
-      var places: Marcador[] = [];
+      var places: string[] = [];
 
       const datos: Guia = {
         uid: user.user.uid,

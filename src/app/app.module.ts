@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { Injector, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 
@@ -13,15 +13,40 @@ import { environment } from 'src/environments/environment';
 
 import { HttpClientModule } from '@angular/common/http';
 import { MarkerService } from './marker.service';
+import { PopupComponent } from './popup/popup.component';
 
+import { createCustomElement } from '@angular/elements';
 
 @NgModule({
-  declarations: [AppComponent],
-  entryComponents: [],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule,  AngularFireModule.initializeApp(environment.firebaseConfig),
-    AngularFireAuthModule, HttpClientModule],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, MarkerService],
-
+  declarations: [
+    AppComponent, 
+    PopupComponent // Para poder poner un componente en un popup
+  ],
+  entryComponents: [PopupComponent], // Para poder poner un componente en un popup
+  imports: [
+    BrowserModule, 
+    IonicModule.forRoot(), 
+    AppRoutingModule,  
+    AngularFireModule.initializeApp(environment.firebaseConfig),
+    AngularFireAuthModule, 
+    HttpClientModule
+  ],
+  providers: [
+    { 
+      provide: RouteReuseStrategy, 
+      useClass: IonicRouteStrategy }, 
+    MarkerService
+  ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule {
+
+  // Para poder poner un componente en un popup
+  constructor(private injector: Injector) {
+    const popupElement = createCustomElement(PopupComponent, {injector});
+    // Registra el elemento personalizado en el buscador.
+    customElements.define('popup-element', popupElement);
+  }
+
+}
+
