@@ -1,0 +1,94 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Perfil</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div *ngIf="userGuia$ | async as user; else notFound">
+    <div *ngIf="userType=='Guía'; else unauthorized">
+      <ion-card>
+        <ion-card-header>
+          <!--img src="https://picsum.photos/id/113/150/150" /-->
+          <div class="label bottom">
+            <img id="profilePhoto" [src]="user.photo" />
+          </div>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-label class="size">Nombre de usuario:</ion-label>
+          
+          <ion-label class="size">Correo electronico:</ion-label>
+          <p class="size">{{user.email}}</p>
+
+          <ion-label class="size">Biografía:</ion-label>
+          <p class="size">{{user.biografia}}</p>
+
+          <div id="starsContainer" class="col-12" style="text-align: center">
+            <p>Valoración como guía :)</p>
+            <span class="fa fa-star m-1" id="1star"></span>
+            <span class="fa fa-star m-1" id="2star"></span>
+            <span class="fa fa-star m-1" id="3star"></span>
+            <span class="fa fa-star m-1" id="4star"></span>
+            <span class="fa fa-star m-1" id="5star"></span>
+          </div>
+        </ion-card-content>
+      </ion-card>
+      <div>
+        <p class="places m-2">Lugares asignados como guía</p>
+        <div class="row m-2 cardContainer">
+          <div *ngIf="userPlaces.length <= 0">
+            <p class="places m-2">No estas asignado a ningún lugar :(</p>
+          </div>
+          <div
+            *ngFor="let sitio of userPlaces"
+            class="card col-4"
+            style="width: 18rem"
+          >
+            <ion-img
+              src="./assets/images/paisaje.jpg"
+              class="card-img-top"
+              styles="width:100%"
+              alt="Paisaje"
+            ></ion-img>
+            <div class="card-body">
+              <h5 class="card-title">{{sitio.name}}</h5>
+              <p class="card-text">Visitado el: 9/1/2022</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p class="m-2 places">
+          ¿Necesitas ayuda para ser un buen guía? Haz click en la imagen
+        </p>
+        <div class="row m-2 photoContainer">
+          <a
+            class="photoSize"
+            href="https://www.educaweb.com/profesion/guia-turistico-212/"
+            target="_blank"
+            ><ion-img
+              src="./assets/images/guiaturistico.png"
+              alt="Foto de guía"
+            ></ion-img
+          ></a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ng-template #notFound>
+    <div class="d-flex" id="notFound">
+      <img src="./assets/images/notFound2.jpg" alt="" />
+    </div>
+    <div class="d-flex m-2" style="justify-content:center">
+      <ion-button routerLink="/home">Volver al inicio</ion-button>
+    </div>
+  </ng-template>
+  <ng-template #unauthorized>
+    <div class="d-flex" id="unauthorized">
+      <img src="./assets/images/unauthorized.jpg" id="photo" alt="" />
+    </div>
+    <div class="d-flex m-2" style="justify-content:center">
+      <ion-button routerLink="/home">Volver al inicio</ion-button>
+    </div>
+  </ng-template>
+</ion-content>

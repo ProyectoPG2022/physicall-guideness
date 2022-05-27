@@ -1,19 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import { USE_EMULATOR } from '@angular/fire/compat/auth';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from '../auth.service';
 import { Guia } from '../intefaces/guia.interface';
-import { Usuario } from '../intefaces/usuario.interface';
 
 @Component({
-  selector: 'app-private-profile',
-  templateUrl: './private-profile.page.html',
-  styleUrls: ['./private-profile.page.scss'],
+  selector: 'app-public-profile',
+  templateUrl: './public-profile.page.html',
+  styleUrls: ['./public-profile.page.scss'],
 })
-export class PrivateProfilePage implements OnInit {
+export class PublicProfilePage implements OnInit {
   userGuia$: Observable<any>;
+
   public paragraph;
+  public userPlaces;
+  public userType;
   constructor(
     private authSvc: AuthService,
     private router: Router,
@@ -23,19 +24,21 @@ export class PrivateProfilePage implements OnInit {
   ngOnInit() {
     const id = this.route.snapshot.params.id;
     this.userGuia$ = this.authSvc.getOneGuia(id);
-    this.userGuia$.subscribe((user) => this.fillStars(user));
+    this.userGuia$.subscribe((user) => {
+      this.fillStars(user);
+      this.userPlaces = user.sitios;
+      this.userType = user.type;
+    });
   }
 
   private fillStars(user: Guia): void {
-    window.addEventListener('DOMContentLoaded', (event) => {
-      if (user.type == 'Guía') {
-        const rating = user.valoracionMedia;
+    /*if (user.type == 'Guía') {
+      const rating = user.valoracionMedia;
 
-        for (let j = 1; j <= rating; j++) {
-          document.getElementById(j + 'star').style.color = 'orange';
-        }
+      for (let j = 1; j <= rating; j++) {
+        document.getElementById(j + 'star').style.color = 'orange';
       }
-    });
+    }*/
 
     //   for (let i = 1; i <= rating; i++) {
     //     const bu=document.getElementById(i + 'star');

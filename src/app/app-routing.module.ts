@@ -2,7 +2,8 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { PerfilPage } from './perfil/perfil.page';
-import { PrivateProfilePage } from './private-profile/private-profile.page';
+
+import { PublicProfilePage } from './public-profile/public-profile.page';
 
 const routes: Routes = [
   {
@@ -51,16 +52,13 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'private-profile',
-    loadChildren: () =>
-      import('./private-profile/private-profile.module').then(
-        (m) => m.PrivateProfilePageModule
-      ),
+    path: 'public-profile',
+    loadChildren: () => import('./public-profile/public-profile.module').then( m => m.PublicProfilePageModule)
+  },  {
+    path: 'public-profile/:id',
+    component: PublicProfilePage,
   },
-  {
-    path: 'private-profile/:id',
-    component: PrivateProfilePage,
-  },
+
 ];
 @NgModule({
   imports: [

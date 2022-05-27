@@ -4,17 +4,17 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { PrivateProfilePageRoutingModule } from './private-profile-routing.module';
 
-import { PrivateProfilePage } from './private-profile.page';
+import { PublicProfilePage } from './public-profile.page';
+import { PublicProfilePageRoutingModule } from './public-profile-routing.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    PrivateProfilePageRoutingModule
+    PublicProfilePageRoutingModule
   ],
-  declarations: [PrivateProfilePage]
+  declarations: [PublicProfilePage]
 })
-export class PrivateProfilePageModule {}
+export class PublicProfilePageModule {}
