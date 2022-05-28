@@ -11,7 +11,7 @@ import { Guia } from '../intefaces/guia.interface';
 })
 export class PublicProfilePage implements OnInit {
   userGuia$: Observable<any>;
-
+  //
   public paragraph;
   public userPlaces;
   public userType;
