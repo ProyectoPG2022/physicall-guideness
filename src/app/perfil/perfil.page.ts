@@ -23,11 +23,9 @@ export class PerfilPage implements OnInit {
   public userPlaces;
   public userUid;
   public paragraph;
+  private newSliderValue;
 
-  constructor(
-    private authSvc: AuthService,
-    private router: Router,
-  ) {}
+  constructor(private authSvc: AuthService, private router: Router) {}
 
   public profileForm = new FormGroup({
     username: new FormControl('', Validators.required),
@@ -38,6 +36,9 @@ export class PerfilPage implements OnInit {
   });
   ngOnInit() {
     this.authSvc.user$.subscribe((user) => this.initFormValues(user));
+  }
+  public updateValue($event) {
+    this.newSliderValue = $event.target.value;
   }
 
   onSaveUser(user: any): void {
@@ -56,6 +57,10 @@ export class PerfilPage implements OnInit {
         if (user.photo == '') {
           user.photo = this.currentImage;
         }
+        //TODO: comprobar esta mierda
+        //const slider = document.getElementById('slider').getAttribute('value');
+        user.populationControl = this.newSliderValue
+
         this.authSvc.preSaveUserProfile(user, this.image);
         //La foto se actualiza sola en unos segundos, pero quizás no, en caso de detectar que no se actualiza
         //descomentar la linea de abajo
@@ -77,6 +82,10 @@ export class PerfilPage implements OnInit {
     this.generalUser = user;
     this.userUid = user.uid;
     this.userType = user.type;
+
+    const slider = document.getElementById('slider');
+    slider.setAttribute('value', user.populationControl);
+
     if (user.type == 'Viajero') {
       this.userPlaces = user.sitios;
       console.log(this.userPlaces);
