@@ -45,7 +45,6 @@
           <p class="m-2">
             Visibilidad de los marcadores del mapa (Población de la ciudad)
           </p>
-          <p>{{user.populationControl}}</p>
           <ion-range
             id="slider"
             min="0"
@@ -62,20 +61,28 @@
           <ion-label>Correo electronico</ion-label>
           <input matInput placeholder="Email" formControlName="" />
         </ion-item-->
-
-        <div id="starsContainer" class="col-12" style="text-align: center">
-          <p>Mi valoración como guía :)</p>
-          <span class="fa fa-star m-1" id="1star"></span>
-          <span class="fa fa-star m-1" id="2star"></span>
-          <span class="fa fa-star m-1" id="3star"></span>
-          <span class="fa fa-star m-1" id="4star"></span>
-          <span class="fa fa-star m-1" id="5star"></span>
-        </div>
-        <div class="buttonsContainer">
-          <ion-button class="button" type="submit">Guardar cambios</ion-button>
-          <ion-button class="button" (click)="onLogOut()"
-            >Cerrar sesión</ion-button
+        <div>
+          <div
+            *ngIf="userType=='Guía'"
+            id="starsContainer"
+            class="col-12"
+            style="text-align: center"
           >
+            <p>Mi valoración como guía :)</p>
+            <span class="fa fa-star m-1" id="1star"></span>
+            <span class="fa fa-star m-1" id="2star"></span>
+            <span class="fa fa-star m-1" id="3star"></span>
+            <span class="fa fa-star m-1" id="4star"></span>
+            <span class="fa fa-star m-1" id="5star"></span>
+          </div>
+          <div class="buttonsContainer">
+            <ion-button class="button" type="submit"
+              >Guardar cambios</ion-button
+            >
+            <ion-button class="button" (click)="onLogOut()"
+              >Cerrar sesión</ion-button
+            >
+          </div>
         </div>
       </ion-card-content>
     </ion-card>

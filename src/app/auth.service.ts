@@ -19,7 +19,7 @@ import { Marcador } from './intefaces/marcador.interface';
   providedIn: 'root',
 })
 export class AuthService {
-  public user$: Observable<Usuario>;
+  public user$: Observable<any>;
   private filePath: string;
   constructor(
     private strg: AngularFireStorage,
