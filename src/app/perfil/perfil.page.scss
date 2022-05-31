@@ -119,11 +119,20 @@ ion-item {
     width: 100%;
   }
 }
-.photoSize:hover{
+.photoSize:hover {
   transition: transform 0.2s;
   transform: scale(1.07);
 }
-.fa{
+.fa {
   cursor: pointer;
 }
-
+ion-range {
+  padding: 0px;
+  margin: 0px !important;
+  width: 40vw;
+}
+#sliderContainer {
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+}

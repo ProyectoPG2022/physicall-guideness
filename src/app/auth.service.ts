@@ -19,7 +19,7 @@ import { Marcador } from './intefaces/marcador.interface';
   providedIn: 'root',
 })
 export class AuthService {
-  public user$: Observable<Usuario>;
+  public user$: Observable<any>;
   private filePath: string;
   constructor(
     private strg: AngularFireStorage,
@@ -150,6 +150,7 @@ export class AuthService {
         biografia: biografi,
         sitios: places,
         photo: '',
+        populationControl:10000
       };
       return await userRef.set(datos, { merge: true });
     }
@@ -170,6 +171,7 @@ export class AuthService {
         valoracionMedia: 0.0,
         sitios: places,
         photo: '',
+        populationControl:10000
       };
       return await userRef.set(datos, { merge: true });
     }
@@ -184,6 +186,7 @@ export class AuthService {
         username: user.username,
         biografia: user.biografia,
         photo: user.photo,
+        populationControl:user.populationControl
       };
       return await userRef.update(datos);
     } catch (error) {

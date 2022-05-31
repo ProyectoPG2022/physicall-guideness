@@ -1,11 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  AfterViewChecked,
+  AfterViewInit,
+  Component,
+  OnInit,
+} from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { AuthService } from '../auth.service';
 import { Usuario } from '../intefaces/usuario.interface';
 import { Archivo } from '../intefaces/archivo.interface';
 import Swal from 'sweetalert2';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { Guia } from '../intefaces/guia.interface';
+import { filter, windowTime } from 'rxjs/operators';
+import { loadavg } from 'os';
 
 @Component({
   selector: 'app-perfil',
@@ -16,18 +24,16 @@ export class PerfilPage implements OnInit {
   user$$: Observable<any> = this.authSvc.afAuth.user;
 
   public image: Archivo;
-  public currentImage =
-    './assets/user.png'; /*'https://picsum.photos/id/113/150/150';*/
-  private generalUser;
+  public currentImage = './assets/images/user.png';
+
   public userType;
   public userPlaces;
   public userUid;
   public paragraph;
+  private newSliderValue;
+  public userLogged;
 
-  constructor(
-    private authSvc: AuthService,
-    private router: Router,
-  ) {}
+  constructor(private authSvc: AuthService, private router: Router) {}
 
   public profileForm = new FormGroup({
     username: new FormControl('', Validators.required),
@@ -36,12 +42,31 @@ export class PerfilPage implements OnInit {
     photo: new FormControl('', Validators.required),
     uid: new FormControl('', Validators.required),
   });
+
   ngOnInit() {
-    this.authSvc.user$.subscribe((user) => this.initFormValues(user));
+    this.authSvc.user$.subscribe((user) => {
+      this.initFormValues(user);
+    });
+  }
+
+  private fillStars(/***user: any*/): void {
+    const rating = this.userLogged.valoracionMedia;
+    for (let i = 1; i <= rating; i++) {
+      document.getElementById(i + 'star').style.color = 'orange';
+    }
+
+    if (!this.paragraph) {
+      this.paragraph = document
+        .getElementById('starsContainer')
+        .appendChild(document.createElement('p'));
+      this.paragraph.textContent = '' + rating;
+    }
+  }
+  public updateValue($event) {
+    this.newSliderValue = $event.target.value;
   }
 
   onSaveUser(user: any): void {
-    //console.log('usuario auth', user.uid);
     const body = document.getElementsByTagName('body')[0];
 
     Swal.fire({
@@ -56,6 +81,9 @@ export class PerfilPage implements OnInit {
         if (user.photo == '') {
           user.photo = this.currentImage;
         }
+
+        user.populationControl = this.newSliderValue;
+
         this.authSvc.preSaveUserProfile(user, this.image);
         //La foto se actualiza sola en unos segundos, pero quizás no, en caso de detectar que no se actualiza
         //descomentar la linea de abajo
@@ -73,39 +101,34 @@ export class PerfilPage implements OnInit {
     });
     body.classList.remove('swal2-height-auto');
   }
-  private initFormValues(user: any): void {
-    this.generalUser = user;
-    this.userUid = user.uid;
-    this.userType = user.type;
-    if (user.type == 'Viajero') {
-      this.userPlaces = user.sitios;
-      console.log(this.userPlaces);
-    } else {
-      this.userPlaces = user.sitios;
-      const rating = user.valoracionMedia;
 
-      for (let i = 1; i <= rating; i++) {
-        document.getElementById(i + 'star').style.color = 'orange';
+  private async initFormValues(user: any) {
+    if (user) {
+      this.userUid = user.uid;
+      this.userType = user.type;
+      this.userLogged = user;
+
+      const slider = document.getElementById('slider');
+      slider.setAttribute('value', user.populationControl);
+
+      if (user.type == 'Viajero') {
+        this.userPlaces = user.sitios;
+        //console.log(this.userPlaces);
+      } else if (user.type == 'Guía') {
+        this.userPlaces = user.sitios;
       }
 
-      if (!this.paragraph) {
-        this.paragraph = document
-          .getElementById('starsContainer')
-          .appendChild(document.createElement('p'));
-        this.paragraph.textContent = '' + rating;
+      if (user.photo != '') {
+        this.currentImage = user.photo;
       }
+      this.profileForm.patchValue({
+        username: user.username,
+        email: user.email,
+        biografia: user.biografia,
+        //photo: user.photo,
+        uid: user.uid,
+      });
     }
-
-    if (user.photo != '') {
-      this.currentImage = user.photo;
-    }
-    this.profileForm.patchValue({
-      username: user.username,
-      email: user.email,
-      biografia: user.biografia,
-      //photo: user.photo,
-      uid: user.uid,
-    });
   }
   handleImage($event): void {
     this.image = $event.target.files[0];

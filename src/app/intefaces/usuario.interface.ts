@@ -8,5 +8,6 @@ export interface Usuario {
     biografia?: string,
     type?: string,
     photo?: string,
-    sitios?: string[];
+    sitios?: string[],
+    populationControl:number
 }
