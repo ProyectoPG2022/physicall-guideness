@@ -1,12 +1,19 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import {
+  AfterViewChecked,
+  AfterViewInit,
+  Component,
+  OnInit,
+} from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { AuthService } from '../auth.service';
 import { Usuario } from '../intefaces/usuario.interface';
 import { Archivo } from '../intefaces/archivo.interface';
 import Swal from 'sweetalert2';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Guia } from '../intefaces/guia.interface';
+import { filter, windowTime } from 'rxjs/operators';
+import { loadavg } from 'os';
 
 @Component({
   selector: 'app-perfil',
@@ -24,6 +31,7 @@ export class PerfilPage implements OnInit {
   public userUid;
   public paragraph;
   private newSliderValue;
+  public userLogged;
 
   constructor(private authSvc: AuthService, private router: Router) {}
 
@@ -34,10 +42,25 @@ export class PerfilPage implements OnInit {
     photo: new FormControl('', Validators.required),
     uid: new FormControl('', Validators.required),
   });
+
   ngOnInit() {
     this.authSvc.user$.subscribe((user) => {
       this.initFormValues(user);
     });
+  }
+
+  private fillStars(/***user: any*/): void {
+    const rating = this.userLogged.valoracionMedia;
+    for (let i = 1; i <= rating; i++) {
+      document.getElementById(i + 'star').style.color = 'orange';
+    }
+
+    if (!this.paragraph) {
+      this.paragraph = document
+        .getElementById('starsContainer')
+        .appendChild(document.createElement('p'));
+      this.paragraph.textContent = '' + rating;
+    }
   }
   public updateValue($event) {
     this.newSliderValue = $event.target.value;
@@ -78,10 +101,12 @@ export class PerfilPage implements OnInit {
     });
     body.classList.remove('swal2-height-auto');
   }
-  private initFormValues(user: any): void {
+
+  private async initFormValues(user: any) {
     if (user) {
       this.userUid = user.uid;
       this.userType = user.type;
+      this.userLogged = user;
 
       const slider = document.getElementById('slider');
       slider.setAttribute('value', user.populationControl);
@@ -91,19 +116,6 @@ export class PerfilPage implements OnInit {
         //console.log(this.userPlaces);
       } else if (user.type == 'Guía') {
         this.userPlaces = user.sitios;
-
-        const rating = user.valoracionMedia;
-
-        for (let i = 0; i < rating; i++) {
-          document.getElementById('fa').style.color = 'orange';
-        }
-
-        if (!this.paragraph) {
-          this.paragraph = document
-            .getElementById('starsContainer')
-            .appendChild(document.createElement('p'));
-          this.paragraph.textContent = '' + rating;
-        }
       }
 
       if (user.photo != '') {
