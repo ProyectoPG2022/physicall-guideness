@@ -136,6 +136,8 @@ export class AuthService {
     biografi: string,
     tipo: string
   ) {
+    var places: Marcador[] = [];
+    
     if (tipo == 'Viajero') {
       const userRef: AngularFirestoreDocument<Usuario> = this.afs.doc(
         `usuarios/${user.user.uid}`
@@ -159,7 +161,7 @@ export class AuthService {
         `usuarios/${user.user.uid}`
       );
 
-      var places: string[] = [];
+      
 
       const datos: Guia = {
         uid: user.user.uid,
