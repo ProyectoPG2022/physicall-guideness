@@ -49,7 +49,7 @@ export class PerfilPage implements OnInit {
     });
   }
 
-  private fillStars(/***user: any*/): void {
+  private fillStars(/*user: any*/): void {
     const rating = this.userLogged.valoracionMedia;
     for (let i = 1; i <= rating; i++) {
       document.getElementById(i + 'star').style.color = 'orange';
