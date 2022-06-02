@@ -1,29 +1,36 @@
-import {
-  AfterViewChecked,
-  AfterViewInit,
-  Component,
-  OnInit,
-} from '@angular/core';
+import { AfterContentChecked, Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { AuthService } from '../auth.service';
-import { Usuario } from '../intefaces/usuario.interface';
 import { Archivo } from '../intefaces/archivo.interface';
 import Swal from 'sweetalert2';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { Guia } from '../intefaces/guia.interface';
-import { filter, windowTime } from 'rxjs/operators';
-import { loadavg } from 'os';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-perfil',
   templateUrl: './perfil.page.html',
   styleUrls: ['./perfil.page.scss'],
 })
-export class PerfilPage implements OnInit {
+export class PerfilPage implements OnInit, AfterContentChecked {
+  /*
+
+A la hora de concertar la cita hay que sacar el id del viajero que la solicita y la del guia al que se le solicita,
+meter en la array del viajero el marcador/sitio 
+
+Sólo con estos datos ya que son los únicos visibles en la card de sitios visitados/asignados como guía
+datos:Marcador={
+  ciudad:"Ciudad",
+  pais:"El que sea",
+  descripcion:"asdsd"
+}
+el usuarioo la variable xD.sitios.push(datos)
+
+
+*/
+
   user$$: Observable<any> = this.authSvc.afAuth.user;
 
-  public image: Archivo;
+  private image: Archivo;
   public currentImage = './assets/images/user.png';
 
   public userType;
@@ -34,6 +41,12 @@ export class PerfilPage implements OnInit {
   public userLogged;
 
   constructor(private authSvc: AuthService, private router: Router) {}
+  ngAfterContentChecked(): void {
+    const element = document.getElementById('starsContainer');
+    if (element) {
+      this.fillStars();
+    }
+  }
 
   public profileForm = new FormGroup({
     username: new FormControl('', Validators.required),
@@ -46,22 +59,10 @@ export class PerfilPage implements OnInit {
   ngOnInit() {
     this.authSvc.user$.subscribe((user) => {
       this.initFormValues(user);
+      this.userLogged = user;
     });
   }
 
-  private fillStars(/*user: any*/): void {
-    const rating = this.userLogged.valoracionMedia;
-    for (let i = 1; i <= rating; i++) {
-      document.getElementById(i + 'star').style.color = 'orange';
-    }
-
-    if (!this.paragraph) {
-      this.paragraph = document
-        .getElementById('starsContainer')
-        .appendChild(document.createElement('p'));
-      this.paragraph.textContent = '' + rating;
-    }
-  }
   public updateValue($event) {
     this.newSliderValue = $event.target.value;
   }
@@ -107,15 +108,11 @@ export class PerfilPage implements OnInit {
       this.userUid = user.uid;
       this.userType = user.type;
       this.userLogged = user;
+      this.userPlaces = user.sitios;
 
       const slider = document.getElementById('slider');
-      slider.setAttribute('value', user.populationControl);
-
-      if (user.type == 'Viajero') {
-        this.userPlaces = user.sitios;
-        //console.log(this.userPlaces);
-      } else if (user.type == 'Guía') {
-        this.userPlaces = user.sitios;
+      if (slider) {
+        slider.setAttribute('value', user.populationControl);
       }
 
       if (user.photo != '') {
@@ -125,7 +122,6 @@ export class PerfilPage implements OnInit {
         username: user.username,
         email: user.email,
         biografia: user.biografia,
-        //photo: user.photo,
         uid: user.uid,
       });
     }
@@ -159,7 +155,6 @@ export class PerfilPage implements OnInit {
           body.classList.remove('swal2-height-auto');
         }
       });
-
       body.classList.remove('swal2-height-auto');
     } catch (error) {
       const body = document.getElementsByTagName('body')[0];
@@ -169,6 +164,23 @@ export class PerfilPage implements OnInit {
         text: 'Por favor, vuelva a intentarlo',
       });
       body.classList.remove('swal2-height-auto');
+    }
+  }
+
+  public fillStars(): void {
+    if (this.userLogged.type == 'Guía') {
+      const rating = this.userLogged.valoracionMedia;
+
+      for (let j = 1; j <= rating; j++) {
+        document.getElementById(j + 'star').style.color = 'orange';
+      }
+
+      if (!this.paragraph) {
+        this.paragraph = document
+          .getElementById('starsContainer')
+          .appendChild(document.createElement('p'));
+        this.paragraph.textContent = '' + rating;
+      }
     }
   }
 }

@@ -41,6 +41,7 @@
           <ion-textarea placeholder="Biografía" formControlName="biografia">
           </ion-textarea>
         </ion-item>
+        
         <div id="sliderContainer" class="d-flex">
           <p class="m-2">
             Visibilidad de los marcadores del mapa (Población de la ciudad)
@@ -90,6 +91,11 @@
 
   <div *ngIf="userType =='Viajero'">
     <p class="places">Lugares visitados</p>
+    <div class="row m-2 cardContainer">
+      <div *ngIf="userPlaces.length <= 0">
+        <p class="places m-2">Todavía no has visitado ningún sitio :(</p>
+      </div>
+    </div>
     <div class="row m-2 cardContainer">
       <div
         *ngFor="let sitio of userPlaces"
