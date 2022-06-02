@@ -5,4 +5,5 @@ export interface Marcador{
     longitud?:string
     pais?:string
     ciudad?:string
+    uid?:string
 }

@@ -146,6 +146,12 @@ export class PerfilPage implements OnInit {
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
         confirmButtonText: 'Cerrar sesión',
+        input: 'select',
+        inputOptions: {
+          hola: "adios",
+          hastaluego: "Buenastardes"
+        }
+        
       }).then((result) => {
         if (result.isConfirmed) {
           this.router.navigate(['home']);

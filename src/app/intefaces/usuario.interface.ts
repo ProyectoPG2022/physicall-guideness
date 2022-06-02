@@ -1,13 +1,12 @@
 import { Marcador } from "./marcador.interface";
 
 export interface Usuario {
-    uid: string;
+    uid: string,
     email?: string,
     emailVerified?: boolean,
     username?: string,
     biografia?: string,
     type?: string,
     photo?: string,
-    sitios?: Marcador[],
-    populationControl:number
+    sitios?: string[]
 }
