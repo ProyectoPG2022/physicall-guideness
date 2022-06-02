@@ -1,25 +1,30 @@
+
 <ion-header no-border>
   <ion-toolbar>
     <section class="d-flex justify-content-evenly">
-      <div class="align-self-center">
-
-
-      <img id="logo" src="../../assets/icon/favicon.png" alt="Logo" />
-    </div>
-    <div>
-      <span class="titulo">
-        <h1>Physicall Guideness</h1>
-      </span>
-    </div>
-  </section>
+      <div class="align-self-center d-flex justify-content-evenly">
+        <img id="logo" src="../../assets/icon/favicon.png" alt="Logo" />
+        <span class="titulo">
+          <h1>Physicall Guideness</h1>
+        </span>
+      </div>
+      <div>
+        <span class="user">
+          <h2>Bienvenido {{str_nombre_usuario}}</h2>
+        </span>
+      </div>
+    </section>
   </ion-toolbar>
 </ion-header>
 <ion-content [fullscreen]="true">
-  <ion-searchbar [placeholder]="str_placeholder"></ion-searchbar>
-
+  <ion-searchbar [placeholder]="str_placeholder" (ionChange)="buscar($event)" [debounce]="2000"></ion-searchbar>
   <main class="col">
     <section class="mt-4 align-self-center p-4">
-      <div id="userLogged" *ngIf="user$$ | async as user ; else nouserlogged">
+      <div id="userLogged" *ngIf="user$ | async as user ; else nouserlogged">
+        <div *ngIf="user.type=='Guía'">
+          <ion-label class="me-2">Habilitar creación de sitios</ion-label>
+          <ion-checkbox color="secondary" [(ngModel)]="editMap"></ion-checkbox>
+        </div>
         <h2>Guías cerca de ti:</h2>
         <div class="map-container">
           <div class="map-frame">
@@ -27,22 +32,15 @@
           </div>
         </div>
       </div>
-      <div id="guias-cercanos" class="container text-center">
-        <div class="guia-card" style="width: 18rem">
-          <img id="img-guia" src="../../assets/" class="card-img-top" alt="..." />
-          <div class="guia-card-body">
-            <h3 id="nombre-guia" class="guia-card-title">Juana Maria Fernandez Lopez</h3>
-            <p id="biografia-guia" class="guia-card-text">Estudiante.</p>
-
-            <a id="perfil-guia" href="#" class="btn btn-primary">Ver perfil</a>
-          </div>
-        </div>
-      </div>
     </section>
 
     <ng-template #nouserlogged>
-      <p>Para poder acceder al mapa tienes que iniciar sesión.</p>
+      <section class="nouserlogged">
+        <img src="../../assets/images/user.png">
+        <p>Para poder acceder al mapa tienes que iniciar sesión.</p>
+      </section>
+
     </ng-template>
-    
+
   </main>
 </ion-content>

@@ -16,6 +16,7 @@ import { MarkerService } from './marker.service';
 import { PopupComponent } from './popup/popup.component';
 
 import { createCustomElement } from '@angular/elements';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { createCustomElement } from '@angular/elements';
   ],
   entryComponents: [PopupComponent], // Para poder poner un componente en un popup
   imports: [
+    CommonModule,
     BrowserModule, 
     IonicModule.forRoot(), 
     AppRoutingModule,  

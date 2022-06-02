@@ -34,6 +34,9 @@
         </ion-card-content>
       </ion-card>
       <div>
+        <div class="d-flex m-2" style="justify-content:center">
+          <ion-button routerLink="/home">Volver al inicio</ion-button>
+        </div>
         <p class="places m-2">Lugares asignados como guía</p>
         <div class="row m-2 cardContainer">
           <div *ngIf="userPlaces.length <= 0">
