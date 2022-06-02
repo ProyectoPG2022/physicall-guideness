@@ -8,8 +8,6 @@ import { UsuariosService } from '../usuarios.service';
 import Swal from 'sweetalert2';
 import { Marcador } from '../intefaces/marcador.interface';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { doc, updateDoc, arrayUnion, arrayRemove, collection } from "firebase/firestore";
-
 
 @Component({
   selector: 'app-popup',
@@ -68,6 +66,7 @@ export class PopupComponent implements OnInit {
     const body = document.getElementsByTagName('body')[0];
     Swal.fire({
       title: '¿Quiere agregarse como guía a este sitio?',
+      text: `${this.marcador.ciudad} / ${this.marcador.pais}`,
       icon: 'question',
       showDenyButton: true,
       denyButtonText: 'No',

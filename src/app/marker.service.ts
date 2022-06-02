@@ -7,7 +7,7 @@ import * as L from 'leaflet'
 
 import { Ciudad } from './intefaces/ciudad.interface';
 import { Marcador } from './intefaces/marcador.interface';
-import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/compat/firestore';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 
 import { Viajero } from './intefaces/viajero.interface';
 import { AuthService } from './auth.service';
@@ -45,7 +45,8 @@ export class MarkerService {
     private afs: AngularFirestore,
     injector: Injector,
     private authSvc: AuthService,
-    private http: HttpClient) {
+    private http: HttpClient
+  ) {
 
   }
 
@@ -109,33 +110,33 @@ export class MarkerService {
   }
 
 
-  crearMarcador(latlng: L.LatLng, uidGuia: string) {
-    const body = document.getElementsByTagName('body')[0];
-    Swal.fire({
-      icon: 'question',
-      title: '¿Quiere crear un nuevo marcador esta posición?',
-      showDenyButton: true,
-      confirmButtonText: 'Aceptar',
-      denyButtonText: 'Cancelar',
-    }).then((result) => {
-      if (result.isConfirmed) {
+  async crearMarcador(latlng: L.LatLng, uidGuia: string) {
+
+    this.http.get(`https://api.geoapify.com/v1/geocode/reverse?lat=${latlng.lat}&lon=${latlng.lng}&apiKey=d595e96962364b8aa09e1c5ef06d5286`)
+      .subscribe(data => {
+        const paisMarc = data['features'][0]['properties']['country']
+        const ciudadMarc = data['features'][0]['properties']['city']
         const body = document.getElementsByTagName('body')[0];
         Swal.fire({
-          title: 'Introduce un nombre para el nuevo marcador',
-          input: 'text',
-          inputPlaceholder: 'Nombre del sitio...',
+          icon: 'question',
+          title: `¿Quiere crear un nuevo marcador en ${ciudadMarc} / ${paisMarc}?`,
           showDenyButton: true,
-          confirmButtonText: 'Crear marcador',
+          confirmButtonText: 'Aceptar',
           denyButtonText: 'Cancelar',
-        }).then(async (res) => {
-          if (res.isConfirmed) {
-
-            var guias: string[] = []
-            guias.push(uidGuia)
-
-            this.http.get(`https://api.geoapify.com/v1/geocode/reverse?lat=${latlng.lat}&lon=${latlng.lng}&apiKey=d595e96962364b8aa09e1c5ef06d5286`)
-              .subscribe(data => {
-
+        }).then((result) => {
+          if (result.isConfirmed) {
+            const body = document.getElementsByTagName('body')[0];
+            Swal.fire({
+              title: 'Introduce un nombre para el nuevo marcador',
+              input: 'text',
+              inputPlaceholder: 'Nombre del sitio...',
+              showDenyButton: true,
+              confirmButtonText: 'Crear marcador',
+              denyButtonText: 'Cancelar',
+            }).then(async (res) => {
+              if (res.isConfirmed) {
+                var guias: string[] = []
+                guias.push(uidGuia)
                 var idGenerado = uuidv4()
 
                 var marcador: Marcador = {
@@ -143,8 +144,8 @@ export class MarkerService {
                   guias: guias,
                   latitud: latlng.lat.toString(),
                   longitud: latlng.lng.toString(),
-                  pais: data['features'][0]['properties']['country'],
-                  ciudad: data['features'][0]['properties']['city'],
+                  pais: paisMarc,
+                  ciudad: ciudadMarc,
                   uid: idGenerado,
                 }
                 this.afs.collection<Marcador>('marcadores')
@@ -158,20 +159,18 @@ export class MarkerService {
                     Swal.fire('Ha ocurrido un error durante la creación del marcador', '', 'warning')
                     body.classList.remove('swal2-height-auto');
                   })
-
-              }, error => {
-                console.log(error)
-              })
-
-          } else if (res.isDenied) {
-            const body = document.getElementsByTagName('body')[0];
-            Swal.fire('Creación de marcador cancelada', '', 'info')
+              } else if (res.isDenied) {
+                const body = document.getElementsByTagName('body')[0];
+                Swal.fire('Creación de marcador cancelada', '', 'info')
+                body.classList.remove('swal2-height-auto');
+              }
+            })
             body.classList.remove('swal2-height-auto');
           }
         })
         body.classList.remove('swal2-height-auto');
-      }
-    })
-    body.classList.remove('swal2-height-auto');
+      }, error => {
+        console.log(error)
+      })
   }
 }

@@ -1,5 +1,3 @@
-import { Marcador } from "./marcador.interface";
-
 export interface Usuario {
     uid: string,
     email?: string,
@@ -8,5 +6,6 @@ export interface Usuario {
     biografia?: string,
     type?: string,
     photo?: string,
-    sitios?: string[]
+    sitios?: string[],
+    control_poblacion?:number
 }

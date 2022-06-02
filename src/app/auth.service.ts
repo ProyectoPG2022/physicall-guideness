@@ -7,13 +7,11 @@ import {
   AngularFirestoreDocument,
 } from '@angular/fire/compat/firestore';
 import { Observable, of } from 'rxjs';
-import { Router } from '@angular/router';
 import { Viajero } from './intefaces/viajero.interface';
 import { Guia } from './intefaces/guia.interface';
 import { Archivo } from './intefaces/archivo.interface';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import Swal from 'sweetalert2';
-import { Marcador } from './intefaces/marcador.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -136,7 +134,7 @@ export class AuthService {
     biografi: string,
     tipo: string
   ) {
-    var places: Marcador[] = [];
+    var places: string[] = [];
     
     if (tipo == 'Viajero') {
       const userRef: AngularFirestoreDocument<Usuario> = this.afs.doc(
@@ -152,7 +150,7 @@ export class AuthService {
         biografia: biografi,
         sitios: places,
         photo: '',
-        populationControl:10000
+        control_poblacion:10000
       };
       return await userRef.set(datos, { merge: true });
     }
@@ -173,7 +171,7 @@ export class AuthService {
         valoracionMedia: 0.0,
         sitios: places,
         photo: '',
-        populationControl:10000
+        control_poblacion:10000
       };
       return await userRef.set(datos, { merge: true });
     }
