@@ -15,7 +15,11 @@
         <!--img src="https://picsum.photos/id/113/150/150" /-->
         <div class="label bottom">
           <p id="changePhoto">Cambiar</p>
-          <img [src]="currentImage" (click)="imageProfile.click()" />
+          <img
+            id="profilePhoto"
+            [src]="currentImage"
+            (click)="imageProfile.click()"
+          />
           <input
             hidden
             type="file"
@@ -41,6 +45,7 @@
           <ion-textarea placeholder="Biografía" formControlName="biografia">
           </ion-textarea>
         </ion-item>
+
         <div id="sliderContainer" class="d-flex">
           <p class="m-2">
             Visibilidad de los marcadores del mapa (Población de la ciudad)
@@ -88,8 +93,13 @@
     </ion-card>
   </form>
 
-  <div *ngIf="userType =='Viajero'">
+  <div *ngIf="userType =='Viajero'" class="border-top border-bottom m-5">
     <p class="places">Lugares visitados</p>
+    <div class="row m-2 cardContainer">
+      <div *ngIf="userPlaces.length <= 0">
+        <p class="places m-2">Todavía no has visitado ningún sitio :(</p>
+      </div>
+    </div>
     <div class="row m-2 cardContainer">
       <div
         *ngFor="let sitio of userPlaces"
@@ -110,25 +120,64 @@
     </div>
   </div>
   <div *ngIf="userType =='Guía'">
-    <p class="places m-2">Lugares asignados como guía</p>
-    <div class="row m-2 cardContainer">
-      <div *ngIf="userPlaces.length <= 0">
-        <p class="places m-2">No estas asignado a ningún lugar :(</p>
+    <div class="border-top border-bottom m-5">
+      <p class="places m-2">Lugares asignados como guía</p>
+      <div class="row m-2 cardContainer">
+        <div *ngIf="userPlaces.length <= 0">
+          <p class="places m-2">No estas asignado a ningún lugar :(</p>
+        </div>
+        <div
+          *ngFor="let sitio of userPlaces"
+          class="card col-4"
+          style="width: 18rem"
+        >
+          <ion-img
+            src="./assets/images/paisaje.jpg"
+            class="card-img-top"
+            styles="width:100%"
+            alt="Paisaje"
+          ></ion-img>
+          <div class="card-body">
+            <h5 class="card-title">{{sitio.descripcion}}</h5>
+            <p class="card-text">{{sitio.ciudad}}</p>
+          </div>
+        </div>
       </div>
-      <div
-        *ngFor="let sitio of userPlaces"
-        class="card col-4"
-        style="width: 18rem"
-      >
-        <ion-img
-          src="./assets/images/paisaje.jpg"
-          class="card-img-top"
-          styles="width:100%"
-          alt="Paisaje"
-        ></ion-img>
-        <div class="card-body">
-          <h5 class="card-title">{{sitio.descripcion}}</h5>
-          <p class="card-text">{{sitio.ciudad}}</p>
+    </div>
+
+    <div class="border-top border-bottom m-5">
+      <p class="places m-2">Comentarios</p>
+      <ng-container *ngIf="userComents.length <= 0">
+        <p class="places m-2">Nadie ha dejado un comentario :(</p>
+      </ng-container>
+      <div *ngFor="let comentario of userComents" class="container">
+        <div class="row coments justify-content-center">
+          <div class="col-6">
+            <div class="d-flex media p-3 flex-wrap">
+              <img
+              *ngIf="comentario.userPhoto!=''"
+                class="flex-shrink-0 me-3 mt-3 rounded-circle"
+                src="{{comentario.userPhoto}}"
+                width="64"
+                height="64"
+                alt=""
+              />
+              <img
+              *ngIf="comentario.userPhoto==''"
+                class="flex-shrink-0 me-3 mt-3 rounded-circle"
+                src="./assets/images/user.png"
+                width="64"
+                height="64"
+                alt=""
+              />
+              <div>
+                <p class="nombre">
+                  {{comentario.userUsername}}<span>{{comentario.date}}</span>
+                </p>
+                <p class="comentario">{{comentario.message}}</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -5,84 +5,135 @@
 </ion-header>
 
 <ion-content>
-  <div *ngIf="userGuia$ | async as user; else notFound">
-    <div *ngIf="userType=='Guía'; else unauthorized">
-      <ion-card>
-        <ion-card-header>
-          <!--img src="https://picsum.photos/id/113/150/150" /-->
-          <div class="label bottom">
-            <img id="profilePhoto" [src]="user.photo" />
-          </div>
-        </ion-card-header>
-        <ion-card-content>
-          <ion-label class="size">Nombre de usuario:</ion-label>
-          
-          <ion-label class="size">Correo electronico:</ion-label>
-          <p class="size">{{user.email}}</p>
+  <ng-container *ngIf="userLogged$ | async as userL; else logout">
+    <ng-container *ngIf="userGuia$ | async as userG; else notFound">
+      <ng-container
+        *ngIf="userG.type =='Guía'; then authorized else unauthorized"
+      >
+      </ng-container>
+      <ng-template #authorized
+        ><ion-card>
+          <ion-card-header>
+            <!--img src="https://picsum.photos/id/113/150/150" /-->
+            <div class="label bottom">
+              <img id="profilePhoto" [src]="userG.photo" />
+            </div>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-label class="labelSize">Nombre de usuario:</ion-label>
+            <p class="paragraphSize">{{userG.username}}</p>
 
-          <ion-label class="size">Biografía:</ion-label>
-          <p class="size">{{user.biografia}}</p>
+            <ion-label class="labelSize">Correo electronico:</ion-label>
+            <p class="paragraphSize">{{userG.email}}</p>
+            <ion-label class="labelSize">Biografía:</ion-label>
+            <p class="paragraphSize">{{userG.biografia}}</p>
 
-          <div id="starsContainer" class="col-12" style="text-align: center">
-            <p>Valoración como guía :)</p>
-            <span class="fa fa-star m-1" id="1star"></span>
-            <span class="fa fa-star m-1" id="2star"></span>
-            <span class="fa fa-star m-1" id="3star"></span>
-            <span class="fa fa-star m-1" id="4star"></span>
-            <span class="fa fa-star m-1" id="5star"></span>
-          </div>
-        </ion-card-content>
-      </ion-card>
-      <div>
-        <div class="d-flex m-2" style="justify-content:center">
-          <ion-button routerLink="/home">Volver al inicio</ion-button>
-        </div>
-        <p class="places m-2">Lugares asignados como guía</p>
-        <div class="row m-2 cardContainer">
-          <div *ngIf="userPlaces.length <= 0">
-            <p class="places m-2">No estas asignado a ningún lugar :(</p>
-          </div>
-          <div
-            *ngFor="let sitio of userPlaces"
-            class="card col-4"
-            style="width: 18rem"
+            <div id="starsContainer" class="col-12" style="text-align: center">
+              <p>Valoración como guía :)</p>
+              <span class="fa fa-star m-1" id="1star"></span>
+              <span class="fa fa-star m-1" id="2star"></span>
+              <span class="fa fa-star m-1" id="3star"></span>
+              <span class="fa fa-star m-1" id="4star"></span>
+              <span class="fa fa-star m-1" id="5star"></span>
+            </div>
+          </ion-card-content>
+        </ion-card>
+        <div
+          class="d-flex m-4"
+          style="justify-content: center; flex-wrap: wrap"
+        >
+          <ion-button class="button" (click)="onComent()"
+            >Deja un comentario al guía</ion-button
           >
-            <ion-img
-              src="./assets/images/paisaje.jpg"
-              class="card-img-top"
-              styles="width:100%"
-              alt="Paisaje"
-            ></ion-img>
-            <div class="card-body">
-              <h5 class="card-title">{{sitio.name}}</h5>
-              <p class="card-text">Visitado el: 9/1/2022</p>
+          <ion-button class="button" routerLink="/home"
+            >Volver al inicio</ion-button
+          >
+        </div>
+        <div class="border-top border-bottom m-5">
+          <p class="places m-2">Lugares asignados como guía</p>
+          <div class="row m-2 cardContainer">
+            <ng-container *ngIf="userPlaces.length <= 0">
+              <p class="places m-2">No está asignado a ningún lugar :(</p>
+            </ng-container>
+            <ng-container
+              *ngFor="let sitio of userPlaces"
+              class="card col-4"
+              style="width: 18rem"
+            >
+              <ion-img
+                src="./assets/images/paisaje.jpg"
+                class="card-img-top"
+                styles="width:100%"
+                alt="Paisaje"
+              ></ion-img>
+              <div class="card-body">
+                <h4 class="card-title">{{sitio.descripcion}}</h4>
+                <p class="card-text">{{sitio.ciudad}} ({{sitio.pais}})</p>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+        <div class="border-top border-bottom m-5">
+          <p class="places m-2">Comentarios</p>
+          <ng-container *ngIf="userComents.length <= 0">
+            <p class="places m-2">Nadie ha dejado un comentario :(</p>
+          </ng-container>
+          <div *ngFor="let comentario of userComents" class="container">
+            <div class="row coments justify-content-center">
+              <div class="col-6">
+                <div class="d-flex media p-3 flex-wrap">
+                  <img
+                    *ngIf="comentario.userPhoto==''"
+                    class="flex-shrink-0 me-3 mt-3 rounded-circle"
+                    src="./assets/images/user.png"
+                    width="64"
+                    height="64"
+                    alt="Foto usuario"
+                  />
+                  <img
+                    *ngIf="comentario.userPhoto!=''"
+                    class="flex-shrink-0 me-3 mt-3 rounded-circle"
+                    src="{{comentario.userPhoto}}"
+                    width="64"
+                    height="64"
+                    alt="Foto usuario"
+                  />
+                  <div>
+                    <p class="nombre">
+                      {{comentario.userUsername}}<span
+                        >{{comentario.date}}</span
+                      >
+                    </p>
+                    <p class="comentario">{{comentario.message}}</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div>
-        <p class="m-2 places">
-          ¿Necesitas ayuda para ser un buen guía? Haz click en la imagen
-        </p>
-        <div class="row m-2 photoContainer">
-          <a
-            class="photoSize"
-            href="https://www.educaweb.com/profesion/guia-turistico-212/"
-            target="_blank"
-            ><ion-img
-              src="./assets/images/guiaturistico.png"
-              alt="Foto de guía"
-            ></ion-img
-          ></a>
-        </div>
-      </div>
-    </div>
-  </div>
+        <div>
+          <p class="m-5 places">
+            ¿Necesitas ayuda para ser un buen guía? Haz click en la imagen
+          </p>
+          <div class="row m-2 photoContainer">
+            <a
+              class="photoSize"
+              href="https://www.educaweb.com/profesion/guia-turistico-212/"
+              target="_blank"
+              ><ion-img
+                src="./assets/images/guiaturistico.png"
+                alt="Foto de guía"
+              ></ion-img
+            ></a>
+          </div></div
+      ></ng-template>
+    </ng-container>
+  </ng-container>
   <ng-template #notFound>
     <div class="d-flex" id="notFound">
       <img src="./assets/images/notFound2.jpg" alt="" />
     </div>
-    <div class="d-flex m-2" style="justify-content:center">
+    <div class="d-flex m-2" style="justify-content: center">
       <ion-button routerLink="/home">Volver al inicio</ion-button>
     </div>
   </ng-template>
@@ -90,8 +141,23 @@
     <div class="d-flex" id="unauthorized">
       <img src="./assets/images/unauthorized.jpg" id="photo" alt="" />
     </div>
-    <div class="d-flex m-2" style="justify-content:center">
+    <div class="d-flex m-2" style="justify-content: center">
       <ion-button routerLink="/home">Volver al inicio</ion-button>
+    </div>
+  </ng-template>
+  <ng-template #logout>
+    <div id="template" class="d-flex">
+      <ion-img src="/assets/images/islita.png" alt="Playa"></ion-img>
+      <p id="message">
+        Vaya, parece que no has iniciado sesión, vamos a cambiar eso!!
+      </p>
+      <ion-row class="m-2">
+        <ion-col>
+          <ion-button id="margin-button" routerLink="/login"
+            >Iniciar sesión</ion-button
+          >
+        </ion-col>
+      </ion-row>
     </div>
   </ng-template>
 </ion-content>

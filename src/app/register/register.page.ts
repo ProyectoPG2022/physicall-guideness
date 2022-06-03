@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ExceptionCode } from '@capacitor/core';
 import Swal from 'sweetalert2';
 import { AuthService } from '../auth.service';
 
@@ -69,8 +68,6 @@ export class RegisterPage implements OnInit {
           Swal.fire({
             icon: 'error',
             title: 'Algo ha ido mal :(',
-            text: '',
-            footer: 'Ejemplo de formato: correo@algo.com',
           });
           //No borar, po lo que dios mas quiera
           //Chapuza que resuelve quita la clase de altura del sweetalert pq no se veia
@@ -110,6 +107,16 @@ export class RegisterPage implements OnInit {
           });
           //No borar, po lo que dios mas quiera
           //Chapuza que resuelve quita la clase de altura del sweetalert pq no se veia
+          body.classList.remove('swal2-height-auto');
+          break;
+        }
+        default: {
+          const body = document.getElementsByTagName('body')[0];
+          Swal.fire({
+            icon: 'error',
+            title: 'Algo ha ido mal :(',
+            text: 'Por favor vuelva a intentarlo en otro momento :(',
+          });
           body.classList.remove('swal2-height-auto');
           break;
         }

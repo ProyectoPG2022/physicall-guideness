@@ -39,7 +39,14 @@ export class AuthService {
     try {
       return this.afAuth.sendPasswordResetEmail(email);
     } catch (error) {
-      console.log(error);
+      //console.log(error);
+      const body = document.getElementsByTagName('body')[0];
+      Swal.fire({
+        icon: 'error',
+        title: 'Algo ha ido mal :(',
+        text: 'Error al mandar correo de reseteo de contraseña, por favor vuelva a intentarlo',
+      });
+      body.classList.remove('swal2-height-auto');
     }
   }
 
@@ -85,7 +92,14 @@ export class AuthService {
     try {
       return (await this.afAuth.currentUser).sendEmailVerification();
     } catch (error) {
-      console.log(error);
+      //console.log(error);
+      const body = document.getElementsByTagName('body')[0];
+      Swal.fire({
+        icon: 'error',
+        title: 'Algo ha ido mal :(',
+        text: 'Error al mandar correo de verificación, por favor vuelva a intentarlo',
+      });
+      body.classList.remove('swal2-height-auto');
     }
   }
   async isEmailVerified(user: any) {
@@ -134,8 +148,8 @@ export class AuthService {
     biografi: string,
     tipo: string
   ) {
-    var places: string[] = [];
-    
+    var places: Marcador[] = [];
+
     if (tipo == 'Viajero') {
       const userRef: AngularFirestoreDocument<Usuario> = this.afs.doc(
         `usuarios/${user.user.uid}`
@@ -150,7 +164,7 @@ export class AuthService {
         biografia: biografi,
         sitios: places,
         photo: '',
-        control_poblacion:10000
+        populationControl: 10000,
       };
       return await userRef.set(datos, { merge: true });
     }
@@ -158,8 +172,6 @@ export class AuthService {
       const userRef: AngularFirestoreDocument<Usuario> = this.afs.doc(
         `usuarios/${user.user.uid}`
       );
-
-      
 
       const datos: Guia = {
         uid: user.user.uid,
@@ -171,7 +183,8 @@ export class AuthService {
         valoracionMedia: 0.0,
         sitios: places,
         photo: '',
-        control_poblacion:10000
+        populationControl: 10000,
+        coments: [],
       };
       return await userRef.set(datos, { merge: true });
     }
@@ -186,7 +199,7 @@ export class AuthService {
         username: user.username,
         biografia: user.biografia,
         photo: user.photo,
-        populationControl:user.populationControl
+        populationControl: user.populationControl,
       };
       return await userRef.update(datos);
     } catch (error) {
@@ -194,7 +207,7 @@ export class AuthService {
       Swal.fire({
         icon: 'error',
         title: 'Algo ha ido mal :(',
-        text: 'Por favor espere unos minutos es intentelo de nuevo',
+        text: 'Por favor, espere unos minutos e intentelo de nuevo',
       });
       body.classList.remove('swal2-height-auto');
     }
@@ -222,7 +235,7 @@ export class AuthService {
       )
       .subscribe();
   }
-  public getOneGuia(id:string): Observable<Usuario> {
-    return this.afs.doc<Usuario>(`usuarios/${id}`).valueChanges();
+  public getOne(id: string): Observable<any> {
+    return this.afs.doc<any>(`usuarios/${id}`).valueChanges();
   }
 }
