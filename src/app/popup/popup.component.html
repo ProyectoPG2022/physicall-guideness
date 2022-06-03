@@ -1,38 +1,53 @@
-<img alt="Paisaje" src="../../assets/images/paisaje.jpg">
+<section>
+  <img alt="Paisaje" src="../../assets/images/paisaje.jpg">
 
-
-<div *ngIf="user$ | async as user">
-  <div *ngIf="user.type == 'Viajero'">
-    <ion-button (click)="pedirCita($event)">Pedir cita</ion-button>
-  </div>
-  <div *ngIf="user.type == 'Guía'">
-    <div *ngIf="!isGuiaInPopup(user.uid)">
-      <ion-button  (click)="agregarAlSitio($event)">Agregarme como guía</ion-button>
+  <div *ngIf="!ciudad; else isCiudad">
+    <div *ngIf="user$ | async as user">
+      <div *ngIf="user.type == 'Viajero'">
+        <ion-button (click)="pedirCita($event)">Pedir cita</ion-button>
+      </div>
+      <div *ngIf="user.type == 'Guía'">
+        <div *ngIf="!isGuiaInPopup(user.uid)">
+          <ion-button (click)="agregarAlSitio($event)">Agregarme como guía</ion-button>
+        </div>
+      </div>
+    </div>
+    <h5>Guías disponibles en <u>{{titulo}}</u>:</h5>
+    <div *ngIf="guiasPopup.length > 0; else noGuiasYet">
+      <ul class="list-group list-group-flush" *ngFor="let guia of guiasPopup">
+        <li class="list-group-item" style="list-style-type: none;">
+          <div class="guia-content" *ngIf="user$ | async as user">
+            <span>{{guia.username}}</span>
+            <div *ngIf="guia.uid == user.uid; else verperfilpublico">
+              <ion-button class="btn-sm" routerLink="/perfil/">Ver perfil</ion-button>
+            </div>
+            <ng-template #verperfilpublico>
+              <ion-button class="btn-sm" routerLink="/public-profile/{{guia.uid}}">Ver perfil</ion-button>
+            </ng-template>
+          </div>
+        </li>
+      </ul>
     </div>
   </div>
-</div>
 
-
-<h5>Guías disponibles en <u>{{titulo}}</u>:</h5>
-<div *ngIf="guiasPopup.length > 0; else noGuiasYet">
-  <ul class="list-group list-group-flush" *ngFor="let guia of guiasPopup">
-    <li class="list-group-item" style="list-style-type: none;">
-      <div class="guia-content" *ngIf="user$ | async as user">
-        <span>{{guia.username}}</span>
-        <div *ngIf="guia.uid == user.uid; else verperfilpublico">
-          <ion-button class="btn-sm" routerLink="/perfil/">Ver perfil</ion-button>
-        </div>
-        <ng-template #verperfilpublico>
-          <ion-button class="btn-sm" routerLink="/public-profile/{{guia.uid}}">Ver perfil</ion-button>
-        </ng-template>
-      </div>
-    </li>
-  </ul>
-</div>
+  <ng-template #isCiudad>
+    <h5>{{titulo}}</h5>
+  </ng-template>
 
 
 
-<ng-template #noGuiasYet>
-  <span>Todavía no hay ningún guía inscrito en este sitio, se el primero!<ion-button (click)="agregarAlSitio($event)">
-      Apuntarme</ion-button></span>
-</ng-template>
+
+
+  <ng-template #noGuiasYet>
+    <div *ngIf="user$ | async as user">
+      <span *ngIf="user.type == 'Guía'; else noGuiasViajero">Todavía no hay ningún guía inscrito en este sitio, se el
+        primero!<ion-button (click)="agregarAlSitio($event)">
+          Apuntarme</ion-button></span>
+    </div>
+  </ng-template>
+
+
+  <ng-template #noGuiasViajero>
+    <span>Todavía no hay ningún guía inscrito en este sitio</span>
+  </ng-template>
+</section>

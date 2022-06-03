@@ -1,12 +1,12 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
-import { MapServiceService } from '../map.service';
+import { MapServiceService } from '../services/map.service';
 import * as L from 'leaflet'
 import '../lib/L.Control.Range-min.js'
-import { MarkerService } from '../marker.service';
-import { AuthService } from '../auth.service';
+import { MarkerService } from '../services/marker.service';
+import { AuthService } from '../services/auth.service';
 import { Observable } from 'rxjs';
-import { Viajero } from '../intefaces/viajero.interface';
+import { Viajero } from '../interfaces/viajero.interface';
 
 @Component({
   selector: 'app-home',
@@ -48,11 +48,10 @@ export class HomePage implements OnInit, AfterViewInit {
       zoomDelta: 0.5, // Obliga al zoom con la rueda que siempre se agregue o se reste la cantidad pasada por valor
       dragging: true, // Permite que el mapa sea "arrastrable"
       boxZoom: true,  // Permite hacer zoom con shift + "click izquierdo mantenido" para seleccionar la zona a la que haremos zoom
-      minZoom: 8,     // El mínimo zoom al que se alejará el mapa
+      minZoom: 6,     // El mínimo zoom al que se alejará el mapa
     }).on("click", <LeafletMouseEvent>(e: { latlng: L.LatLng; }) => {
       this.user$.subscribe(async (res) => {
         if (res.type == 'Guía' && this.editMap) {
-          console.log("Entonce si")
           await this.markerService.crearMarcador(e.latlng, res.uid)
         }
       })
@@ -71,12 +70,13 @@ export class HomePage implements OnInit, AfterViewInit {
 
 
     // Se obtiene la layer con los marcadores de las ciudades con una población mayor al parámetro y se agrega al control
-    var layerGroup_CitiesGTPopulation = await this.markerService.getCitiesMarkersGTPopulation(this.controlPoblacion)
-    this.mapControl.addOverlay(layerGroup_CitiesGTPopulation, "<span style='color: gray'>Ciudades</span>")
+    console.log("Control de población: " + this.controlPoblacion)
+    var layerGroup_CitiesGTPopulation = await this.markerService.getCitiesMarkersGTPopulation(this.map, this.controlPoblacion)
+    this.mapControl.addOverlay(layerGroup_CitiesGTPopulation, "<span style='color: red'>Ciudades</span>")
 
     // Se obtienen los marcadores de firebase
     var marcadoresGuiasCercanos = await this.markerService.getMarkersFirebase(this.map)
-    this.mapControl.addOverlay(marcadoresGuiasCercanos, "<span style='color: gray'>Guias cercanos</span>")
+    this.mapControl.addOverlay(marcadoresGuiasCercanos, "<span style='color: green'>Guias cercanos</span>")
     this.map.addControl(this.mapControl)
 
   }
@@ -119,12 +119,8 @@ export class HomePage implements OnInit, AfterViewInit {
         var coords = new L.LatLng(latBullas, lngBullas)
         if(this.map == undefined) {
           await this.initMap(coords)
-
         }
 
-        let city = await this.mapService.getCityByCoords(latBullas, lngBullas)
-
-        console.log("Ciudad " + city)
       }, (err) => {
         console.warn('Error(' + err.code + '): ' + err.message)
       }, this.options)

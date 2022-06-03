@@ -1,15 +1,11 @@
 import { Injectable, Injector } from '@angular/core';
-
 import { Observable } from 'rxjs';
-
 import { HttpClient } from '@angular/common/http';
 import * as L from 'leaflet'
-
-import { Ciudad } from './intefaces/ciudad.interface';
-import { Marcador } from './intefaces/marcador.interface';
+import { Ciudad } from '../interfaces/ciudad.interface';
+import { Marcador } from '../interfaces/marcador.interface';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-
-import { Viajero } from './intefaces/viajero.interface';
+import { Viajero } from '../interfaces/viajero.interface';
 import { AuthService } from './auth.service';
 import Swal from 'sweetalert2';
 import { v4 as uuidv4 } from 'uuid'
@@ -26,9 +22,9 @@ function crearIcono(str_urlIcon: string): any {
   })
 }
 
-var redLeafIcon = crearIcono('../assets/data/marker_icons/red.png')
-
-var greenLeafIcon = crearIcono('../assets/data/marker_icons/green.png')
+const redLeafIcon = crearIcono('../assets/data/marker_icons/red.png')
+const greenLeafIcon = crearIcono('../assets/data/marker_icons/green.png')
+const tmpIcon = crearIcono('../assets/data/marker_icons/tmp.png')
 
 @Injectable()
 export class MarkerService {
@@ -50,23 +46,27 @@ export class MarkerService {
 
   }
 
-  greenIcon = L.icon({
-    iconUrl: '../assets/data/marker_icons/green.png',
-    shadowUrl: '../assets/data/marker_icons/shadow.png',
+  async getCitiesMarkersGTPopulation(map: L.Map, population: number) {
 
-    iconSize: [38, 95], // size of the icon
-    shadowSize: [50, 64], // size of the shadow
-    iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
-    shadowAnchor: [4, 62],  // the same for the shadow
-    popupAnchor: [-3, -76] // point from which the popup should open relative to the iconAnchor
-  });
-
-  async getCitiesMarkersGTPopulation(population: number) {
     var cities = L.layerGroup()
     this.httpClient.get(this.citiesSpain).subscribe((res: Ciudad[]) => {
       res.forEach((ciudad) => {
+        console.log("ciudad: " + ciudad)
         if (Number(ciudad.population) > population) {
-          L.marker([Number(ciudad.lat), Number(ciudad.lng)], { icon: redLeafIcon }).addTo(cities)
+          var marker = L.marker([Number(ciudad.lat), Number(ciudad.lng)], { icon: redLeafIcon })
+
+          marker.addTo(cities).on({
+            mouseover: function (e) {
+              var px = map.project(e.target._latlng); // Encuentra la posición del pixel dónde el popup está anclado al mapa
+              map.panTo(map.unproject(px), { animate: true }); // Mover el mapa al nuevo centro
+              this.openPopup()
+            }
+          }).bindPopup(() => {
+            const popupEl = document.createElement('popup-element') as any
+            popupEl.titulo = `${ciudad.city} / ${ciudad.country}`
+            popupEl.ciudad = true
+            return popupEl
+          }, { closeButton: false, offset: [0, -40] })
         }
       });
     })
@@ -84,24 +84,25 @@ export class MarkerService {
         marker.addTo(grupo).on({
           mouseover: function (e) {
             var px = map.project(e.target._latlng); // Encuentra la posición del pixel dónde el popup está anclado al mapa
-            px.y -= 5000; // Se mueve el eje Y una cantidad determinada para que el popup se centre en el mapa
-            map.panTo(map.unproject(px), { animate: true }); // Mover el mapa al nuevo centro
-            this.openPopup()
+              map.panTo(map.unproject(px), { animate: true }); // Mover el mapa al nuevo centro
+              this.openPopup()
           }
         }).bindPopup(() => {
           const popupEl = document.createElement('popup-element') as any;
           popupEl.titulo = `${marcador.descripcion}`
           popupEl.guias = marcador.guias
           popupEl.marcador = marcador
+          popupEl.ciudad = false
+          closeButton: false
           return popupEl
-        })
+        }, { closeButton: false, 'minWidth': 250, zoomAnimation: true})
       })
     }))
     return grupo
   }
 
   async putTmpMarker(coords: L.LatLng, map: L.Map) {
-    var marker = L.marker(coords)
+    var marker = L.marker(coords, tmpIcon)
     marker.addTo(map).on({
       mouseover: function (e) {
         marker.removeFrom(map)

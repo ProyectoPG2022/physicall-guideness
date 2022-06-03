@@ -1,6 +1,4 @@
 import {
-  AfterContentChecked,
-  AfterContentInit,
   AfterViewChecked,
   Component,
   OnInit,
@@ -9,8 +7,8 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import Swal from 'sweetalert2';
-import { AuthService } from '../auth.service';
-import { Comentario } from '../intefaces/comentario.interface';
+import { AuthService } from '../services/auth.service';
+import { Comentario } from '../interfaces/comentario.interface';
 
 @Component({
   selector: 'app-public-profile',

@@ -4,3 +4,25 @@
     align-items: center;
     justify-content: space-between;
 }
+
+.leaflet-popup-close-button {
+    display: none;
+}
+
+section {
+    height: 100%;
+    width: auto;
+}
+
+.leaflet-popup-content-wrapper {
+    background-color: red;
+    
+}
+
+.leaflet-popup-content-wrapper .leaflet-popup-content {
+    background-color: orange;
+}
+
+.leaflet-popup-tip-container {
+    background-color: blue;
+}

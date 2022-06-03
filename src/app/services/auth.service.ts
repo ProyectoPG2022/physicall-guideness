@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { finalize, switchMap } from 'rxjs/operators';
-import { Usuario } from './intefaces/usuario.interface';
+import { Usuario } from '../interfaces/usuario.interface';
 import {
   AngularFirestore,
   AngularFirestoreDocument,
 } from '@angular/fire/compat/firestore';
 import { Observable, of } from 'rxjs';
-import { Viajero } from './intefaces/viajero.interface';
-import { Guia } from './intefaces/guia.interface';
-import { Archivo } from './intefaces/archivo.interface';
+import { Viajero } from '../interfaces/viajero.interface';
+import { Guia } from '../interfaces/guia.interface';
+import { Archivo } from '../interfaces/archivo.interface';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import Swal from 'sweetalert2';
 
