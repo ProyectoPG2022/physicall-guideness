@@ -52,7 +52,7 @@
           </p>
           <ion-range
             id="slider"
-            min="0"
+            min="10000"
             max="100000"
             step="10000"
             snaps="true"
@@ -96,13 +96,13 @@
   <div *ngIf="userType =='Viajero'" class="border-top border-bottom m-5">
     <p class="places">Lugares visitados</p>
     <div class="row m-2 cardContainer">
-      <div *ngIf="userPlaces.length <= 0">
+      <div *ngIf="places.length <= 0">
         <p class="places m-2">Todavía no has visitado ningún sitio :(</p>
       </div>
     </div>
     <div class="row m-2 cardContainer">
       <div
-        *ngFor="let sitio of userPlaces"
+        *ngFor="let sitio of places"
         class="card col-4"
         style="width: 18rem"
       >
@@ -114,7 +114,7 @@
         ></ion-img>
         <div class="card-body">
           <h5 class="card-title">{{sitio.descripcion}}</h5>
-          <p class="card-text">{{sitio.ciudad}}</p>
+          <p class="card-text">{{sitio.ciudad}} ({{sitio.pais}})</p>
         </div>
       </div>
     </div>

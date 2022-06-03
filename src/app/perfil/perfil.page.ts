@@ -10,6 +10,8 @@ import { AuthService } from '../services/auth.service';
 import { Archivo } from '../interfaces/archivo.interface';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
+import { Marcador } from '../interfaces/marcador.interface';
+import { MarkerService } from '../services/marker.service';
 
 @Component({
   selector: 'app-perfil',
@@ -46,7 +48,13 @@ el usuarioo la variable xD.sitios.push(datos)
   public userLogged;
   public userComents;
 
-  constructor(private authSvc: AuthService, private router: Router) {}
+  public places: Marcador[] = [];
+
+  constructor(
+    private authSvc: AuthService,
+    private markerSvc: MarkerService,
+    private router: Router
+  ) {}
 
   ngAfterViewChecked(): void {
     const element = document.getElementById('starsContainer');
@@ -67,9 +75,28 @@ el usuarioo la variable xD.sitios.push(datos)
     this.authSvc.user$.subscribe((user) => {
       this.initFormValues(user);
       this.userLogged = user;
+      this.getMarkers(user);
     });
   }
-
+  public getMarkers(user: any) {
+    //Vaciamos el array para que no haya datos duplicados
+    let placesDuplicated=[];
+    this.places.pop();
+    if (user.sitios) {
+      user.sitios.forEach((markerId) => {
+        this.markerSvc.getOne(markerId).subscribe((mark) => {
+          const data: Marcador = {
+            pais: mark.pais,
+            descripcion: mark.descripcion,
+            ciudad: mark.ciudad,
+          };
+          placesDuplicated.push(data);
+          this.places=[...new Set(placesDuplicated)]
+        });
+      });
+    }
+   
+  }
   public updateValue($event) {
     this.newSliderValue = $event.target.value;
   }
@@ -116,7 +143,7 @@ el usuarioo la variable xD.sitios.push(datos)
       this.userType = user.type;
       this.userLogged = user;
       this.userPlaces = user.sitios;
-      this.userComents =user.coments;
+      this.userComents = user.coments;
 
       const slider = document.getElementById('slider');
       if (slider) {
@@ -150,12 +177,6 @@ el usuarioo la variable xD.sitios.push(datos)
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
         confirmButtonText: 'Cerrar sesión',
-        input: 'select',
-        inputOptions: {
-          hola: "adios",
-          hastaluego: "Buenastardes"
-        }
-        
       }).then((result) => {
         if (result.isConfirmed) {
           this.router.navigate(['home']);
