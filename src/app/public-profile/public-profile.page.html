@@ -7,11 +7,7 @@
 <ion-content>
   <ng-container *ngIf="userLogged$ | async as userL; else logout">
     <ng-container *ngIf="userGuia$ | async as userG; else notFound">
-      <ng-container
-        *ngIf="userG.type =='Guía'; then authorized else unauthorized"
-      >
-      </ng-container>
-      <ng-template #authorized
+      <ng-container *ngIf="userG.type =='Guía'; else unauthorized">
         ><ion-card>
           <ion-card-header>
             <!--img src="https://picsum.photos/id/113/150/150" /-->
@@ -52,11 +48,11 @@
         <div class="border-top border-bottom m-5">
           <p class="places m-2">Lugares asignados como guía</p>
           <div class="row m-2 cardContainer">
-            <ng-container *ngIf="userPlaces.length <= 0">
+            <div *ngIf="places.length <= 0">
               <p class="places m-2">No está asignado a ningún lugar :(</p>
-            </ng-container>
-            <ng-container
-              *ngFor="let sitio of userPlaces"
+            </div>
+            <div
+              *ngFor="let sitio of places"
               class="card col-4"
               style="width: 18rem"
             >
@@ -70,7 +66,7 @@
                 <h4 class="card-title">{{sitio.descripcion}}</h4>
                 <p class="card-text">{{sitio.ciudad}} ({{sitio.pais}})</p>
               </div>
-            </ng-container>
+            </div>
           </div>
         </div>
         <div class="border-top border-bottom m-5">
@@ -125,8 +121,9 @@
                 alt="Foto de guía"
               ></ion-img
             ></a>
-          </div></div
-      ></ng-template>
+          </div>
+        </div>
+      </ng-container>
     </ng-container>
   </ng-container>
   <ng-template #notFound>

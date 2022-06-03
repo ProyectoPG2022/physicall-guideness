@@ -1,5 +1,7 @@
 import {
+  AfterContentInit,
   AfterViewChecked,
+  AfterViewInit,
   Component,
   OnInit,
 } from '@angular/core';
@@ -9,6 +11,9 @@ import { Observable } from 'rxjs';
 import Swal from 'sweetalert2';
 import { AuthService } from '../services/auth.service';
 import { Comentario } from '../interfaces/comentario.interface';
+import { MarkerService } from '../services/marker.service';
+import { Marcador } from '../interfaces/marcador.interface';
+import { isNumeric } from 'jquery';
 
 @Component({
   selector: 'app-public-profile',
@@ -18,6 +23,7 @@ import { Comentario } from '../interfaces/comentario.interface';
 export class PublicProfilePage implements OnInit, AfterViewChecked {
   userGuia$: Observable<any>;
   userLogged$: Observable<any> = this.authSvc.user$;
+  marker$: Observable<Marcador>;
 
   private userLogged;
   public userProfile;
@@ -25,13 +31,26 @@ export class PublicProfilePage implements OnInit, AfterViewChecked {
   public userPlaces;
   public userType;
   public userComents;
+  public places: Marcador[] = [];
 
   constructor(
     private authSvc: AuthService,
-    private router: Router,
     private route: ActivatedRoute,
-    private afs: AngularFirestore
-  ) {}
+    private afs: AngularFirestore,
+    private markerSvc: MarkerService
+  ) {
+    //Sacamos el guia de la bd
+    const id = this.route.snapshot.params.id;
+    this.userGuia$ = this.authSvc.getOne(id);
+    //Le hacemos un subscribe para sacar sus datos a una variable
+    this.userGuia$.subscribe((user) => {
+      this.userProfile = user;
+      //this.userPlaces = user.sitios;
+      this.userComents = user.coments;
+      this.getMarkers(user);
+    });
+  }
+
   ngAfterViewChecked(): void {
     const element = document.getElementById('starsContainer');
     if (element) {
@@ -40,18 +59,29 @@ export class PublicProfilePage implements OnInit, AfterViewChecked {
   }
 
   ngOnInit() {
-    //Sacamos el guia de la bd
-    const id = this.route.snapshot.params.id;
-    this.userGuia$ = this.authSvc.getOne(id);
-
-    //Le hacemos un subscribe para sacar sus datos a una variable
-    this.userGuia$.subscribe((user) => {
-      this.userProfile = user;
-      this.userPlaces = user.sitios;
-      this.userComents = user.coments;
-    });
     //Le hacemos un subscribe para sacar sus datos a una variable
     this.userLogged$.subscribe((user) => (this.userLogged = user));
+  }
+
+  public getMarkers(user: any) {
+    //Vaciamos el array para que no haya datos duplicados
+    let placesDuplicated = [];
+    this.places.pop();
+
+    if (user.sitios) {
+      this.userPlaces = user.sitios;
+      this.userPlaces.forEach((markerId) => {
+        this.markerSvc.getOne(markerId).subscribe((mark) => {
+          const data: Marcador = {
+            pais: mark.pais,
+            descripcion: mark.descripcion,
+            ciudad: mark.ciudad,
+          };
+          placesDuplicated.push(data);
+          this.places = [...new Set(placesDuplicated)];
+        });
+      });
+    }
   }
 
   onComent() {
@@ -85,7 +115,7 @@ export class PublicProfilePage implements OnInit, AfterViewChecked {
       if (coment != '') {
         const com: Comentario = {
           date: new Date().toLocaleString(),
-          userPhoto:this.userLogged.photo,
+          userPhoto: this.userLogged.photo,
           message: coment,
           userUid: this.userLogged.uid,
           userUsername: this.userLogged.username,
