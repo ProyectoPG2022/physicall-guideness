@@ -9,6 +9,11 @@
 
 .titulo {}
 
+.imgLogout{
+    max-width: 20vh;
+    max-height: 20vh;
+}
+
 // Buscador
 .wrapper {
     background: #49a4f5;
@@ -25,19 +30,14 @@
 
 // Mapa página principal
 .map-container {
-    background-color: red;
     position: relative;
-    height: 500px;
-    
 }
 
 .map-frame {
-    background-color: green;
     border: 2px solid black;
-    height: 100%;
 }
 
 #map {
     background-color: black;
-    height: 100%;
+    height: 80vh;
 }

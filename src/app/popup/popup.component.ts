@@ -8,6 +8,7 @@ import { UsuariosService } from '../usuarios.service';
 import Swal from 'sweetalert2';
 import { Marcador } from '../intefaces/marcador.interface';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { getDatabase, ref, onValue } from 'firebase/database'
 
 @Component({
   selector: 'app-popup',
@@ -21,7 +22,9 @@ export class PopupComponent implements OnInit {
   @Input() titulo = 'Default tittle.'
   @Input() guias: string[] = []
   @Input() marcador: Marcador
+  @Input() ciudad: boolean
   guiasPopup: Usuario[] = []
+  inputOptions:{}
 
   constructor(
     private resolver: ComponentFactoryResolver,
@@ -30,6 +33,13 @@ export class PopupComponent implements OnInit {
     private afs: AngularFirestore) {
     this.user$.subscribe((usuario) => {
       this.usuLogged = usuario
+    })
+
+    this.guias.forEach((guiaUid) => {
+      this.userService.getUser(guiaUid).subscribe((usu: Usuario) => {
+        var newUser = `${usu.uid}`
+        this.inputOptions[newUser] = usu.username
+      })
     })
   }
 
@@ -51,15 +61,45 @@ export class PopupComponent implements OnInit {
     return bool_esta
   }
 
-  pedirCita(event) {
-    console.log("Pedir cita: " + event)
-    // El viajero pide la cita.
-    // Se manda un mensaje al viajero con la información de la cita
-    // Se manda otro mensaje al Guía
-    // El guia acepta la cita:
-    //    - Se manda un mensaje al viajero y otro al guía de cita aceptada
-    // El guia rechaza:
-    //    - Se manda un mensaje al viajero y otro al guía de cita rechazada
+
+  // El viajero pide la cita.
+  // Se manda un mensaje al viajero con la información de la cita
+  // Se manda otro mensaje al Guía
+  // El guia acepta la cita:
+  //    - Se manda un mensaje al viajero y otro al guía de cita aceptada
+  // El guia rechaza:
+  //    - Se manda un mensaje al viajero y otro al guía de cita rechazada
+  async pedirCita(event) {
+
+    if(this.inputOptions) {
+      console.log("inputOptions: " + JSON.stringify(this.inputOptions))
+
+      const body = document.getElementsByTagName('body')[0];
+      await Swal.fire({
+        title: 'Solicitar un encuentro',
+        input: 'select',
+        inputPlaceholder: 'Seleccione un guía',
+        inputOptions: this.inputOptions,
+        showCancelButton: true,
+        inputValidator: (value) => {
+          return new Promise((resolve) => {
+            if (value) {
+              resolve(value)
+            } else {
+              resolve('Necesitas seleccionar un guía!')
+            }
+          })
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const body = document.getElementsByTagName('body')[0];
+          console.log("guia seleccionado: "+result.value)
+          Swal.fire('Operación aceptada', '', 'success')
+          body.classList.remove('swal2-height-auto');
+        }
+      })
+      body.classList.remove('swal2-height-auto');
+    }
   }
 
   agregarAlSitio(event) {
@@ -73,9 +113,6 @@ export class PopupComponent implements OnInit {
       confirmButtonText: 'Si',
     }).then(async (result) => {
       if (result.isConfirmed) {
-        console.log("Usuario uid: " + this.usuLogged.uid)
-        console.log("Marcador actual: " + this.marcador.uid)
-
         const marcRef = this.afs.collection<Marcador>('marcadores')
           .doc(`${this.marcador.uid}`)
 
