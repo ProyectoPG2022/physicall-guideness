@@ -1,4 +1,9 @@
-import { AfterContentChecked, Component, OnInit } from '@angular/core';
+import {
+  AfterContentChecked,
+  AfterViewChecked,
+  Component,
+  OnInit,
+} from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { AuthService } from '../auth.service';
@@ -11,7 +16,7 @@ import { Router } from '@angular/router';
   templateUrl: './perfil.page.html',
   styleUrls: ['./perfil.page.scss'],
 })
-export class PerfilPage implements OnInit, AfterContentChecked {
+export class PerfilPage implements OnInit, AfterViewChecked {
   /*
 
 A la hora de concertar la cita hay que sacar el id del viajero que la solicita y la del guia al que se le solicita,
@@ -39,9 +44,11 @@ el usuarioo la variable xD.sitios.push(datos)
   public paragraph;
   private newSliderValue;
   public userLogged;
+  public userComents;
 
   constructor(private authSvc: AuthService, private router: Router) {}
-  ngAfterContentChecked(): void {
+
+  ngAfterViewChecked(): void {
     const element = document.getElementById('starsContainer');
     if (element) {
       this.fillStars();
@@ -109,6 +116,7 @@ el usuarioo la variable xD.sitios.push(datos)
       this.userType = user.type;
       this.userLogged = user;
       this.userPlaces = user.sitios;
+      this.userComents =user.coments;
 
       const slider = document.getElementById('slider');
       if (slider) {

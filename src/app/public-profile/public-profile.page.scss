@@ -5,7 +5,7 @@
   max-height: 320px;
   justify-content: center;
 }
-#photo{
+#photo {
   max-height: 320px;
   max-width: 750px;
   width: 100%;
@@ -44,7 +44,7 @@ input.mat-flat-button {
 }
 ion-card-content {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   flex-direction: column;
 }
@@ -91,4 +91,27 @@ ion-card-content {
 }
 #margin-button {
   margin-top: 2vh;
+}
+
+.media {
+  border-top: 1px solid #bfbfbf;
+  padding-top: 20px;
+}
+.media .nombre span {
+  font-size: 15px;
+  color: #464646;
+  margin: 10px;
+}
+.media .nombre {
+  color: #4b65d1;
+}
+
+@media only screen and (max-width: 350px) {
+  ion-card-content {
+    display: flex;
+    flex-wrap: wrap !important;
+    justify-content: flex-start;
+    align-items: flex-start !important;
+    flex-direction: column;
+  }
 }

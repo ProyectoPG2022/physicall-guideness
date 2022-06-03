@@ -5,10 +5,10 @@
 </ion-header>
 
 <ion-content>
-  <ng-container *ngIf="userLogged$ |async as user; else logout">
-    <ng-container *ngIf="userGuia$ | async as user; else notFound">
+  <ng-container *ngIf="userLogged$ |async as userL; else logout">
+    <ng-container *ngIf="userGuia$ | async as userG; else notFound">
       <ng-container
-        *ngIf="user.type =='Guía'; then authorized else unauthorized"
+        *ngIf="userG.type =='Guía'; then authorized else unauthorized"
       >
       </ng-container>
       <ng-template #authorized
@@ -16,18 +16,18 @@
           <ion-card-header>
             <!--img src="https://picsum.photos/id/113/150/150" /-->
             <div class="label bottom">
-              <img id="profilePhoto" [src]="user.photo" />
+              <img id="profilePhoto" [src]="userG.photo" />
             </div>
           </ion-card-header>
           <ion-card-content>
             <ion-label class="labelSize">Nombre de usuario:</ion-label>
-            <p class="paragraphSize">{{user.username}}</p>
+            <p class="paragraphSize">{{userG.username}}</p>
 
             <ion-label class="labelSize">Correo electronico:</ion-label>
-            <p class="paragraphSize">{{user.email}}</p>
+            <p class="paragraphSize">{{userG.email}}</p>
 
             <ion-label class="labelSize">Biografía:</ion-label>
-            <p class="paragraphSize">{{user.biografia}}</p>
+            <p class="paragraphSize">{{userG.biografia}}</p>
 
             <div id="starsContainer" class="col-12" style="text-align: center">
               <p>Valoración como guía :)</p>
@@ -39,7 +39,10 @@
             </div>
           </ion-card-content>
         </ion-card>
-        <div class="d-flex m-4" style="justify-content: center">
+        <div
+          class="d-flex m-4"
+          style="justify-content: center; flex-wrap: wrap"
+        >
           <ion-button class="button" (click)="onComent()"
             >Deja un comentario al guía</ion-button
           >
@@ -47,7 +50,7 @@
             >Volver al inicio</ion-button
           >
         </div>
-        <div>
+        <div class="border-top border-bottom m-5">
           <p class="places m-2">Lugares asignados como guía</p>
           <div class="row m-2 cardContainer">
             <ng-container *ngIf="userPlaces.length <= 0">
@@ -71,8 +74,37 @@
             </ng-container>
           </div>
         </div>
+        <div  class="border-top border-bottom m-5">
+          <p class="places m-2">Comentarios</p>
+          <ng-container *ngIf="userComents.length <= 0">
+            <p class="places m-2">Nadie ha dejado un comentario :(</p>
+          </ng-container>
+          <div *ngFor="let comentario of userComents" class="container">
+            <div class="row coments justify-content-center">
+              <div class="col-6">
+                <div class="d-flex media p-3 flex-wrap">
+                  <img
+                    class="flex-shrink-0 me-3 mt-3 rounded-circle"
+                    src="./assets/images/paisaje.jpg"
+                    width="64"
+                    height="64"
+                    alt=""
+                  />
+                  <div>
+                    <p class="nombre">
+                      {{comentario.userUsername}}<span
+                        >{{comentario.date}}</span
+                      >
+                    </p>
+                    <p class="comentario">{{comentario.message}}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div>
-          <p class="m-2 places">
+          <p class="m-5 places">
             ¿Necesitas ayuda para ser un buen guía? Haz click en la imagen
           </p>
           <div class="row m-2 photoContainer">

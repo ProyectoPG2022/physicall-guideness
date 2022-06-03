@@ -1,6 +1,7 @@
 import {
   AfterContentChecked,
   AfterContentInit,
+  AfterViewChecked,
   Component,
   OnInit,
 } from '@angular/core';
@@ -16,7 +17,7 @@ import { Comentario } from '../intefaces/comentario.interface';
   templateUrl: './public-profile.page.html',
   styleUrls: ['./public-profile.page.scss'],
 })
-export class PublicProfilePage implements OnInit, AfterContentChecked {
+export class PublicProfilePage implements OnInit, AfterViewChecked {
   userGuia$: Observable<any>;
   userLogged$: Observable<any> = this.authSvc.user$;
 
@@ -25,6 +26,7 @@ export class PublicProfilePage implements OnInit, AfterContentChecked {
   public paragraph;
   public userPlaces;
   public userType;
+  public userComents;
 
   constructor(
     private authSvc: AuthService,
@@ -32,7 +34,7 @@ export class PublicProfilePage implements OnInit, AfterContentChecked {
     private route: ActivatedRoute,
     private afs: AngularFirestore
   ) {}
-  ngAfterContentChecked(): void {
+  ngAfterViewChecked(): void {
     const element = document.getElementById('starsContainer');
     if (element) {
       this.fillStars();
@@ -48,6 +50,7 @@ export class PublicProfilePage implements OnInit, AfterContentChecked {
     this.userGuia$.subscribe((user) => {
       this.userProfile = user;
       this.userPlaces = user.sitios;
+      this.userComents = user.coments;
     });
     //Le hacemos un subscribe para sacar sus datos a una variable
     this.userLogged$.subscribe((user) => (this.userLogged = user));
@@ -106,7 +109,6 @@ export class PublicProfilePage implements OnInit, AfterContentChecked {
     }
   }
   public fillStars(): void {
-    console.log('hola');
     if (this.userProfile.type == 'Guía') {
       const rating = this.userProfile.valoracionMedia;
 
