@@ -12,7 +12,6 @@ import { Guia } from './intefaces/guia.interface';
 import { Archivo } from './intefaces/archivo.interface';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import Swal from 'sweetalert2';
-import { Marcador } from './intefaces/marcador.interface';
 
 @Injectable({
   providedIn: 'root',
