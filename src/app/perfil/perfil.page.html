@@ -15,7 +15,11 @@
         <!--img src="https://picsum.photos/id/113/150/150" /-->
         <div class="label bottom">
           <p id="changePhoto">Cambiar</p>
-          <img id="profilePhoto" [src]="currentImage" (click)="imageProfile.click()" />
+          <img
+            id="profilePhoto"
+            [src]="currentImage"
+            (click)="imageProfile.click()"
+          />
           <input
             hidden
             type="file"
@@ -151,8 +155,17 @@
           <div class="col-6">
             <div class="d-flex media p-3 flex-wrap">
               <img
+              *ngIf="comentario.userPhoto!=''"
                 class="flex-shrink-0 me-3 mt-3 rounded-circle"
-                src="./assets/images/paisaje.jpg"
+                src="{{comentario.userPhoto}}"
+                width="64"
+                height="64"
+                alt=""
+              />
+              <img
+              *ngIf="comentario.userPhoto==''"
+                class="flex-shrink-0 me-3 mt-3 rounded-circle"
+                src="./assets/images/user.png"
                 width="64"
                 height="64"
                 alt=""

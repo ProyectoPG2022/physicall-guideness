@@ -87,6 +87,7 @@ export class PublicProfilePage implements OnInit, AfterViewChecked {
       if (coment != '') {
         const com: Comentario = {
           date: new Date().toLocaleString(),
+          userPhoto:this.userLogged.photo,
           message: coment,
           userUid: this.userLogged.uid,
           userUsername: this.userLogged.username,

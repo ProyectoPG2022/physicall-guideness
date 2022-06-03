@@ -84,11 +84,20 @@
               <div class="col-6">
                 <div class="d-flex media p-3 flex-wrap">
                   <img
+                    *ngIf="comentario.userPhoto==''"
                     class="flex-shrink-0 me-3 mt-3 rounded-circle"
-                    src="./assets/images/paisaje.jpg"
+                    src="./assets/images/user.png"
                     width="64"
                     height="64"
-                    alt=""
+                    alt="Foto usuario"
+                  />
+                  <img
+                    *ngIf="comentario.userPhoto!=''"
+                    class="flex-shrink-0 me-3 mt-3 rounded-circle"
+                    src="{{comentario.userPhoto}}"
+                    width="64"
+                    height="64"
+                    alt="Foto usuario"
                   />
                   <div>
                     <p class="nombre">

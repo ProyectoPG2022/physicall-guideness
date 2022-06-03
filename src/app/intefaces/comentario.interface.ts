@@ -2,5 +2,6 @@ export interface Comentario {
     date:string,
     message:string,
     userUid:string,
-    userUsername:string
+    userUsername:string,
+    userPhoto:string
 }
