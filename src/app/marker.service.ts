@@ -2,10 +2,10 @@ import { Injectable, Injector } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import * as L from 'leaflet'
-import { Ciudad } from './intefaces/ciudad.interface';
-import { Marcador } from './intefaces/marcador.interface';
+import { Ciudad } from './interfaces/ciudad.interface';
+import { Marcador } from './interfaces/marcador.interface';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { Viajero } from './intefaces/viajero.interface';
+import { Viajero } from './interfaces/viajero.interface';
 import { AuthService } from './auth.service';
 import Swal from 'sweetalert2';
 import { v4 as uuidv4 } from 'uuid'

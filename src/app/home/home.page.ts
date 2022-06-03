@@ -6,7 +6,7 @@ import '../lib/L.Control.Range-min.js'
 import { MarkerService } from '../marker.service';
 import { AuthService } from '../auth.service';
 import { Observable } from 'rxjs';
-import { Viajero } from '../intefaces/viajero.interface';
+import { Viajero } from '../interfaces/viajero.interface';
 
 @Component({
   selector: 'app-home',

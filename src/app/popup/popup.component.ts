@@ -2,11 +2,11 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ComponentFactoryResolver } from '@angular/core'; // Para poder poner un componente en un popup
 import { Observable } from 'rxjs';
 import { AuthService } from '../auth.service';
-import { Usuario } from '../intefaces/usuario.interface';
-import { Viajero } from '../intefaces/viajero.interface';
+import { Usuario } from '../interfaces/usuario.interface';
+import { Viajero } from '../interfaces/viajero.interface';
 import { UsuariosService } from '../usuarios.service';
 import Swal from 'sweetalert2';
-import { Marcador } from '../intefaces/marcador.interface';
+import { Marcador } from '../interfaces/marcador.interface';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { getDatabase, ref, onValue } from 'firebase/database'
 
