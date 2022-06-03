@@ -15,7 +15,7 @@
         <!--img src="https://picsum.photos/id/113/150/150" /-->
         <div class="label bottom">
           <p id="changePhoto">Cambiar</p>
-          <img [src]="currentImage" (click)="imageProfile.click()" />
+          <img id="profilePhoto" [src]="currentImage" (click)="imageProfile.click()" />
           <input
             hidden
             type="file"
