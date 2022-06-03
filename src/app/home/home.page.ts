@@ -1,10 +1,10 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
-import { MapServiceService } from '../map.service';
+import { MapServiceService } from '../services/map.service';
 import * as L from 'leaflet'
 import '../lib/L.Control.Range-min.js'
-import { MarkerService } from '../marker.service';
-import { AuthService } from '../auth.service';
+import { MarkerService } from '../services/marker.service';
+import { AuthService } from '../services/auth.service';
 import { Observable } from 'rxjs';
 import { Viajero } from '../interfaces/viajero.interface';
 

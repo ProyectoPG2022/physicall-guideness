@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../services/auth.service';
 import { Archivo } from '../interfaces/archivo.interface';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';

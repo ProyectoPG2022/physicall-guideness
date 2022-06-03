@@ -12,7 +12,7 @@ import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { environment } from 'src/environments/environment';
 
 import { HttpClientModule } from '@angular/common/http';
-import { MarkerService } from './marker.service';
+import { MarkerService } from './services/marker.service';
 import { PopupComponent } from './popup/popup.component';
 
 import { createCustomElement } from '@angular/elements';
