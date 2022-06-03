@@ -33,7 +33,7 @@ export class HomePage implements OnInit, AfterViewInit {
     private markerService: MarkerService,
     private authSvc: AuthService) {
     this.user$.subscribe((res) => {
-      this.controlPoblacion = res.control_poblacion
+      this.controlPoblacion = res.populationControl
       this.str_nombre_usuario = res.username
     })
   }

@@ -7,5 +7,5 @@ export interface Usuario {
     type?: string,
     photo?: string,
     sitios?: string[],
-    control_poblacion?:number
+    populationControl?:number
 }
