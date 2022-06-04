@@ -8,7 +8,10 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Viajero } from '../interfaces/viajero.interface';
 import { AuthService } from './auth.service';
 import Swal from 'sweetalert2';
-import { v4 as uuidv4 } from 'uuid'
+
+import { Usuario } from '../interfaces/usuario.interface';
+import { promise } from 'protractor';
+import { Guia } from '../interfaces/guia.interface';
 
 function crearIcono(str_urlIcon: string): any {
   return L.icon({
@@ -29,11 +32,11 @@ const tmpIcon = crearIcono('../assets/data/marker_icons/tmp.png')
 @Injectable()
 export class MarkerService {
 
-  user$: Observable<Viajero> = this.authSvc.afAuth.user;
+  user$: Observable<Usuario> = this.authSvc.afAuth.user;
 
   citiesSpain: string = '../assets/data/cities/spain.json'
   all_cities: string[]
-
+  sitios: string[]
   public marcadoresFirebase$: Observable<Marcador>
 
   constructor(
@@ -43,7 +46,9 @@ export class MarkerService {
     private authSvc: AuthService,
     private http: HttpClient
   ) {
-
+    this.user$.subscribe((res) => {
+      this.sitios = res.sitios
+    })
   }
 
   async getCitiesMarkersGTPopulation(map: L.Map, population: number) {
@@ -51,7 +56,6 @@ export class MarkerService {
     var cities = L.layerGroup()
     this.httpClient.get(this.citiesSpain).subscribe((res: Ciudad[]) => {
       res.forEach((ciudad) => {
-        console.log("ciudad: " + ciudad)
         if (Number(ciudad.population) > population) {
           var marker = L.marker([Number(ciudad.lat), Number(ciudad.lng)], { icon: redLeafIcon })
 
@@ -84,8 +88,8 @@ export class MarkerService {
         marker.addTo(grupo).on({
           mouseover: function (e) {
             var px = map.project(e.target._latlng); // Encuentra la posición del pixel dónde el popup está anclado al mapa
-              map.panTo(map.unproject(px), { animate: true }); // Mover el mapa al nuevo centro
-              this.openPopup()
+            map.panTo(map.unproject(px), { animate: true }); // Mover el mapa al nuevo centro
+            this.openPopup()
           }
         }).bindPopup(() => {
           const popupEl = document.createElement('popup-element') as any;
@@ -95,7 +99,7 @@ export class MarkerService {
           popupEl.ciudad = false
           closeButton: false
           return popupEl
-        }, { closeButton: false, 'minWidth': 250, zoomAnimation: true})
+        }, { closeButton: false, 'minWidth': 250, zoomAnimation: true })
       })
     }))
     return grupo
@@ -110,9 +114,15 @@ export class MarkerService {
     })
   }
 
+  async addMarcadorToGuia(guia: Guia, idNuevoMarcador: string) {
+    guia.sitios.push(idNuevoMarcador)
+    this.afs.collection<Usuario>('usuarios').doc(guia.uid).update({
+      sitios: guia.sitios
+    })
+  }
 
-  async crearMarcador(latlng: L.LatLng, uidGuia: string) {
-
+  async crearMarcador(latlng: L.LatLng, guia: Guia, idNuevoMarcador: string) {
+    var idNuevoMarcador: string
     this.http.get(`https://api.geoapify.com/v1/geocode/reverse?lat=${latlng.lat}&lon=${latlng.lng}&apiKey=d595e96962364b8aa09e1c5ef06d5286`)
       .subscribe(data => {
         const paisMarc = data['features'][0]['properties']['country']
@@ -137,8 +147,7 @@ export class MarkerService {
             }).then(async (res) => {
               if (res.isConfirmed) {
                 var guias: string[] = []
-                guias.push(uidGuia)
-                var idGenerado = uuidv4()
+                guias.push(guia.uid)
 
                 var marcador: Marcador = {
                   descripcion: res.value,
@@ -147,11 +156,10 @@ export class MarkerService {
                   longitud: latlng.lng.toString(),
                   pais: paisMarc,
                   ciudad: ciudadMarc,
-                  uid: idGenerado,
+                  uid: idNuevoMarcador,
                 }
                 this.afs.collection<Marcador>('marcadores')
-                  .doc(idGenerado).set(marcador).then(() => {
-
+                  .doc(idNuevoMarcador).set(marcador).then(() => {
                     const body = document.getElementsByTagName('body')[0];
                     Swal.fire('Creado correctamente!', '', 'success')
                     body.classList.remove('swal2-height-auto');

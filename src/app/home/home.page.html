@@ -1,19 +1,43 @@
 <ion-header no-border>
-  <ion-toolbar>
-    <section class="d-flex justify-content-evenly">
-      <div class="align-self-center d-flex justify-content-evenly">
-        <img id="logo" src="../../assets/icon/favicon.png" alt="Logo" />
-        <span class="titulo">
-          <h1>Physicall Guideness</h1>
-        </span>
-      </div>
-      <div>
-        <span class="user" *ngIf="user$ | async as user">
-          <h2>Bienvenido {{str_nombre_usuario}}</h2>
-        </span>
-      </div>
-    </section>
-  </ion-toolbar>
+  <ion-header>
+    <ion-toolbar>
+      <section class="d-flex justify-content-evenly">
+        <div class="align-self-center d-flex justify-content-evenly">
+          <img id="logo" src="../../assets/icon/favicon.png" alt="Logo" />
+          <span class="titulo">
+            <h1>Physicall Guideness</h1>
+          </span>
+        </div>
+        <div class="align-self-center" *ngIf="user$ | async as user; else logout">
+          <button (click)="onLogOut()" type="button" class="btn btn-outline-secondary rounded-pill d-flex"
+            title="Cerrar sesión">
+
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor"
+              class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+              <path fill-rule="evenodd"
+                d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z" />
+              <path fill-rule="evenodd"
+                d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z" />
+            </svg>
+          </button>
+        </div>
+        <ng-template #logout>
+          <div class="align-self-center">
+            <button routerLink="/login" type="button" class="btn btn-outline-secondary rounded-pill d-flex"
+              title="iniciar sesión">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor"
+                class="bi bi-box-arrow-in-right" viewBox="0 0 16 16">
+                <path fill-rule="evenodd"
+                  d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0v-2z" />
+                <path fill-rule="evenodd"
+                  d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z" />
+              </svg>
+            </button>
+          </div>
+        </ng-template>
+      </section>
+    </ion-toolbar>
+  </ion-header>
 </ion-header>
 <ion-content [fullscreen]="true">
   <div *ngIf="user$ | async as user">
@@ -46,7 +70,7 @@
           <img class="img-fluid imgLogout" src="../../assets/images/mapaNotFound.png">
           <span>
             Si quieres encontrar guías cerca de tu zona<br>
-            <a class="text-decoration-none" routerLink="/login">inicia sesión</a> o 
+            <a class="text-decoration-none" routerLink="/login">inicia sesión</a> o
             <a class="text-decoration-none" routerLink="/register">regístrate</a><br>
             para disfrutar de todas las ventajas!<br>
           </span>

@@ -33,7 +33,7 @@ el usuarioo la variable xD.sitios.push(datos)
 
 */
 
-  user$$: Observable<any> = this.authSvc.afAuth.user;
+  user$: Observable<any> = this.authSvc.afAuth.user;
 
   private image: Archivo;
   public currentImage = './assets/images/user.png';
