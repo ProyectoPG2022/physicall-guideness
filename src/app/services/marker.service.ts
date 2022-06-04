@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import * as L from 'leaflet';
 import { Ciudad } from '../interfaces/ciudad.interface';
 import { Marcador } from '../interfaces/marcador.interface';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/compat/firestore';
 import { AuthService } from './auth.service';
 import Swal from 'sweetalert2';
 import { Usuario } from '../interfaces/usuario.interface';
@@ -46,6 +46,10 @@ export class MarkerService {
     this.user$.subscribe((res) => {
       this.sitios = res.sitios
     })
+  }
+
+  public getOne(id: string): Observable<Marcador> {
+    return this.afs.doc<Marcador>(`marcadores/${id}`).valueChanges();
   }
 
   async getCitiesMarkersGTPopulation(map: L.Map, population: number) {
@@ -104,7 +108,6 @@ export class MarkerService {
           popupEl.guias = marcador.guias
           popupEl.marcador = marcador
           popupEl.ciudad = false
-          closeButton: false
           return popupEl
         }, { closeButton: false, 'minWidth': 250, zoomAnimation: true })
       })
