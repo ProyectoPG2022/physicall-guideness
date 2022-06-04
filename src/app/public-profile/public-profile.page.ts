@@ -66,7 +66,7 @@ export class PublicProfilePage implements OnInit, AfterViewChecked {
   public getMarkers(user: any) {
     //Vaciamos el array para que no haya datos duplicados
     let placesDuplicated = [];
-    this.places.pop();
+    this.places = [];
 
     if (user.sitios) {
       this.userPlaces = user.sitios;
