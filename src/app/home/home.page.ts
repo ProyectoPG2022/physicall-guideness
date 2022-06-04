@@ -2,11 +2,13 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { MapServiceService } from '../services/map.service';
 import * as L from 'leaflet'
-import '../lib/L.Control.Range-min.js'
 import { MarkerService } from '../services/marker.service';
 import { AuthService } from '../services/auth.service';
 import { Observable } from 'rxjs';
-import { Viajero } from '../interfaces/viajero.interface';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { v4 as uuidv4 } from 'uuid'
+import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-home',
@@ -15,7 +17,7 @@ import { Viajero } from '../interfaces/viajero.interface';
 })
 export class HomePage implements OnInit, AfterViewInit {
 
-  user$: Observable<Viajero> = this.authSvc.user$;
+  user$: Observable<any> = this.authSvc.user$;
 
   public str_placeholder: string
 
@@ -25,16 +27,20 @@ export class HomePage implements OnInit, AfterViewInit {
   public controlPoblacion: number
   public str_nombre_usuario: string
   public marcadorTemporal: L.Marker
-  
-  public editMap:boolean = false
+  public userActual: any
+
+  public editMap: boolean = false
 
   constructor(public alertCtrl: AlertController,
     public mapService: MapServiceService,
     private markerService: MarkerService,
-    private authSvc: AuthService) {
+    private authSvc: AuthService,
+    private afs: AngularFirestore,
+    private router: Router) {
     this.user$.subscribe((res) => {
       this.controlPoblacion = res.populationControl
       this.str_nombre_usuario = res.username
+      this.userActual = res
     })
   }
 
@@ -49,13 +55,12 @@ export class HomePage implements OnInit, AfterViewInit {
       dragging: true, // Permite que el mapa sea "arrastrable"
       boxZoom: true,  // Permite hacer zoom con shift + "click izquierdo mantenido" para seleccionar la zona a la que haremos zoom
       minZoom: 6,     // El mínimo zoom al que se alejará el mapa
-    }).on("click", <LeafletMouseEvent>(e: { latlng: L.LatLng; }) => {
-      this.user$.subscribe(async (res) => {
-        if (res.type == 'Guía' && this.editMap) {
-          await this.markerService.crearMarcador(e.latlng, res.uid)
-        }
-      })
-
+    }).on("click", async <LeafletMouseEvent>(e: { latlng: L.LatLng; }) => {
+      if (this.userActual.type == 'Guía' && this.editMap) {
+        const uid = uuidv4()
+        await this.markerService.addMarcadorToGuia(this.userActual, uid)
+        await this.markerService.crearMarcador(e.latlng, this.userActual, uid)
+      }
     })
 
     // Se crean unos detalles del mapa y se añaden
@@ -70,7 +75,6 @@ export class HomePage implements OnInit, AfterViewInit {
 
 
     // Se obtiene la layer con los marcadores de las ciudades con una población mayor al parámetro y se agrega al control
-    console.log("Control de población: " + this.controlPoblacion)
     var layerGroup_CitiesGTPopulation = await this.markerService.getCitiesMarkersGTPopulation(this.map, this.controlPoblacion)
     this.mapControl.addOverlay(layerGroup_CitiesGTPopulation, "<span style='color: red'>Ciudades</span>")
 
@@ -117,7 +121,7 @@ export class HomePage implements OnInit, AfterViewInit {
         const lngBullas = -1.7229798
         // cambiar estos números por latitude y longitud
         var coords = new L.LatLng(latBullas, lngBullas)
-        if(this.map == undefined) {
+        if (this.map == undefined) {
           await this.initMap(coords)
         }
 
@@ -126,6 +130,47 @@ export class HomePage implements OnInit, AfterViewInit {
       }, this.options)
     } else {
       alert("El navegador no soporta la geolocalización.")
+    }
+  }
+
+  onLogOut() {
+    try {
+      const body = document.getElementsByTagName('body')[0];
+
+      Swal.fire({
+        title: '¿Estas seguro?',
+        text: 'Una vez cerrada sesión habrá que volver a iniciar sesión',
+        icon: 'warning',
+        showCancelButton: true,
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Cerrar sesión',
+        
+      }).then((result) => {
+        if (result.isConfirmed) {
+          
+          this.authSvc.logout();
+
+          const body = document.getElementsByTagName('body')[0];
+          Swal.fire({
+            icon: 'success',
+            text: 'Se ha cerrado sesión correctamente',
+          });
+          body.classList.remove('swal2-height-auto');
+
+          this.router.navigate(['login']);
+        }
+      });
+      body.classList.remove('swal2-height-auto');
+    } catch (error) {
+      const body = document.getElementsByTagName('body')[0];
+      Swal.fire({
+        icon: 'error',
+        title: 'Ha ocurrido un error al cerrar sesión',
+        text: 'Por favor, vuelva a intentarlo',
+      });
+      body.classList.remove('swal2-height-auto');
     }
   }
 }
