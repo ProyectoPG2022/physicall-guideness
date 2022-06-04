@@ -127,7 +127,7 @@
           <p class="places m-2">No estas asignado a ningún lugar :(</p>
         </div>
         <div
-          *ngFor="let sitio of userPlaces"
+          *ngFor="let sitio of places"
           class="card col-4"
           style="width: 18rem"
         >
@@ -139,7 +139,7 @@
           ></ion-img>
           <div class="card-body">
             <h5 class="card-title">{{sitio.descripcion}}</h5>
-            <p class="card-text">{{sitio.ciudad}}</p>
+            <p class="card-text">{{sitio.ciudad}} ({{sitio.pais}})</p>
           </div>
         </div>
       </div>

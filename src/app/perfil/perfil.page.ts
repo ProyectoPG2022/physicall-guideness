@@ -80,8 +80,8 @@ el usuarioo la variable xD.sitios.push(datos)
   }
   public getMarkers(user: any) {
     //Vaciamos el array para que no haya datos duplicados
-    let placesDuplicated=[];
-    this.places.pop();
+    let placesDuplicated = [];
+    this.places = [];
     if (user.sitios) {
       user.sitios.forEach((markerId) => {
         this.markerSvc.getOne(markerId).subscribe((mark) => {
@@ -91,11 +91,10 @@ el usuarioo la variable xD.sitios.push(datos)
             ciudad: mark.ciudad,
           };
           placesDuplicated.push(data);
-          this.places=[...new Set(placesDuplicated)]
+          this.places = [...new Set(placesDuplicated)];
         });
       });
     }
-   
   }
   public updateValue($event) {
     this.newSliderValue = $event.target.value;

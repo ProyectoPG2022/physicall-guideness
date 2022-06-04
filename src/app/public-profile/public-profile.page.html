@@ -8,7 +8,7 @@
   <ng-container *ngIf="userLogged$ | async as userL; else logout">
     <ng-container *ngIf="userGuia$ | async as userG; else notFound">
       <ng-container *ngIf="userG.type =='Guía'; else unauthorized">
-        ><ion-card>
+        <ion-card>
           <ion-card-header>
             <!--img src="https://picsum.photos/id/113/150/150" /-->
             <div class="label bottom">
