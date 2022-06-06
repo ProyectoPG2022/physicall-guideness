@@ -1,19 +1,12 @@
-import {
-  AfterContentInit,
-  AfterViewChecked,
-  AfterViewInit,
-  Component,
-  OnInit,
-} from '@angular/core';
+import { AfterViewChecked, Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import Swal from 'sweetalert2';
 import { AuthService } from '../services/auth.service';
 import { Comentario } from '../interfaces/comentario.interface';
 import { MarkerService } from '../services/marker.service';
 import { Marcador } from '../interfaces/marcador.interface';
-import { isNumeric } from 'jquery';
 
 @Component({
   selector: 'app-public-profile',
@@ -132,7 +125,7 @@ export class PublicProfilePage implements OnInit, AfterViewChecked {
       Swal.fire({
         icon: 'error',
         title: 'Algo ha ido mal :(',
-        text: 'Por favor, vuelva a intentarlo',
+        text: 'Error al enviar el comentario, por favor, vuelva a intentarlo',
       });
       body.classList.remove('swal2-height-auto');
     }

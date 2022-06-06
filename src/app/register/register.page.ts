@@ -37,8 +37,6 @@ export class RegisterPage implements OnInit {
     } catch (error) {
       switch (error.code) {
         case 'auth/weak-password': {
-          let password = document.getElementById('pass');
-          //Revisar
           const body = document.getElementsByTagName('body')[0];
           Swal.fire({
             icon: 'error',
@@ -115,7 +113,7 @@ export class RegisterPage implements OnInit {
           Swal.fire({
             icon: 'error',
             title: 'Algo ha ido mal :(',
-            text: 'Por favor vuelva a intentarlo en otro momento :(',
+            text: 'Erro al registrar usuario, por favor vuelva a intentarlo en otro momento :(',
           });
           body.classList.remove('swal2-height-auto');
           break;

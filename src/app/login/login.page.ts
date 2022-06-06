@@ -73,7 +73,7 @@ export class LoginPage implements OnInit {
           Swal.fire({
             icon: 'error',
             title: 'Algo ha ido mal :(',
-            text: 'Por favor vuelva a intentarlo en otro momento :(',
+            text: 'Error al iniciar sesión, por favor vuelva a intentarlo en otro momento :(',
           });
           body.classList.remove('swal2-height-auto');
           break;

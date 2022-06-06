@@ -82,6 +82,16 @@ export class ForgotPasswordPage implements OnInit {
           body.classList.remove('swal2-height-auto');
           break;
         }
+        default: {
+          const body = document.getElementsByTagName('body')[0];
+          Swal.fire({
+            icon: 'error',
+            title: 'Algo ha ido mal :(',
+            text: 'Error al enviar el correo de reinicio de contraseña, por favor vuelva a intentarlo en otro momento :(',
+          });
+          body.classList.remove('swal2-height-auto');
+          break;
+        }
       }
     }
   }
