@@ -207,7 +207,7 @@ export class AuthService {
       Swal.fire({
         icon: 'error',
         title: 'Algo ha ido mal :(',
-        text: 'Por favor, espere unos minutos e intentelo de nuevo',
+        text: 'Error al guardar los datos del usuario, por favor, espere unos minutos e intentelo de nuevo',
       });
       body.classList.remove('swal2-height-auto');
     }
