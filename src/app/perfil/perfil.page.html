@@ -1,32 +1,53 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Perfil</ion-title>
+    <section class="d-flex justify-content-evenly">
+      <div class="align-self-center d-flex justify-content-evenly">
+        <img id="logo" src="../../assets/icon/favicon.png" alt="Logo" />
+        <span class="titulo">
+          <h1>Physicall Guideness</h1>
+        </span>
+      </div>
+      <div class="align-self-center" *ngIf="user$ | async as user; else logoutCabecera">
+        <button (click)="onLogOut()" type="button" class="btn btn-outline-secondary rounded-pill d-flex"
+          title="Cerrar sesión">
+
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor"
+            class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+            <path fill-rule="evenodd"
+              d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z" />
+            <path fill-rule="evenodd"
+              d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z" />
+          </svg>
+        </button>
+      </div>
+      <ng-template #logoutCabecera>
+        <div class="align-self-center">
+          <button routerLink="/login" type="button" class="btn btn-outline-secondary rounded-pill d-flex"
+            title="iniciar sesión">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor"
+              class="bi bi-box-arrow-in-right" viewBox="0 0 16 16">
+              <path fill-rule="evenodd"
+                d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0v-2z" />
+              <path fill-rule="evenodd"
+                d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z" />
+            </svg>
+          </button>
+        </div>
+      </ng-template>
+    </section>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <form
-    *ngIf="user$$ | async as user ; else logout"
-    (ngSubmit)="onSaveUser(profileForm.value)"
-    [formGroup]="profileForm"
-  >
+<ion-content [fullscreen]="true">
+  <form *ngIf="user$ | async as user ; else logout" (ngSubmit)="onSaveUser(profileForm.value)"
+    [formGroup]="profileForm">
     <ion-card>
       <ion-card-header>
         <!--img src="https://picsum.photos/id/113/150/150" /-->
         <div class="label bottom">
           <p id="changePhoto">Cambiar</p>
-          <img
-            id="profilePhoto"
-            [src]="currentImage"
-            (click)="imageProfile.click()"
-          />
-          <input
-            hidden
-            type="file"
-            #imageProfile
-            formControlName="photo"
-            (change)="handleImage($event)"
-          />
+          <img id="profilePhoto" [src]="currentImage" (click)="imageProfile.click()" />
+          <input hidden type="file" #imageProfile formControlName="photo" (change)="handleImage($event)" />
         </div>
       </ion-card-header>
       <ion-card-content>
@@ -67,12 +88,7 @@
           <input matInput placeholder="Email" formControlName="" />
         </ion-item-->
         <div>
-          <div
-            *ngIf="userType=='Guía'"
-            id="starsContainer"
-            class="col-12"
-            style="text-align: center"
-          >
+          <div *ngIf="userType=='Guía'" id="starsContainer" class="col-12" style="text-align: center">
             <p>Mi valoración como guía :)</p>
             <span class="fa fa-star m-1" id="1star"></span>
             <span class="fa fa-star m-1" id="2star"></span>
@@ -81,12 +97,8 @@
             <span class="fa fa-star m-1" id="5star"></span>
           </div>
           <div class="buttonsContainer">
-            <ion-button class="button" type="submit"
-              >Guardar cambios</ion-button
-            >
-            <ion-button class="button" (click)="onLogOut()"
-              >Cerrar sesión</ion-button
-            >
+            <ion-button class="button" type="submit">Guardar cambios</ion-button>
+            <ion-button class="button" (click)="onLogOut()">Cerrar sesión</ion-button>
           </div>
         </div>
       </ion-card-content>
@@ -154,22 +166,10 @@
         <div class="row coments justify-content-center">
           <div class="col-6">
             <div class="d-flex media p-3 flex-wrap">
-              <img
-              *ngIf="comentario.userPhoto!=''"
-                class="flex-shrink-0 me-3 mt-3 rounded-circle"
-                src="{{comentario.userPhoto}}"
-                width="64"
-                height="64"
-                alt=""
-              />
-              <img
-              *ngIf="comentario.userPhoto==''"
-                class="flex-shrink-0 me-3 mt-3 rounded-circle"
-                src="./assets/images/user.png"
-                width="64"
-                height="64"
-                alt=""
-              />
+              <img *ngIf="comentario.userPhoto!=''" class="flex-shrink-0 me-3 mt-3 rounded-circle"
+                src="{{comentario.userPhoto}}" width="64" height="64" alt="" />
+              <img *ngIf="comentario.userPhoto==''" class="flex-shrink-0 me-3 mt-3 rounded-circle"
+                src="./assets/images/user.png" width="64" height="64" alt="" />
               <div>
                 <p class="nombre">
                   {{comentario.userUsername}}<span>{{comentario.date}}</span>
@@ -188,15 +188,9 @@
       ¿Necesitas ayuda para ser un buen guía? Haz click en la imagen
     </p>
     <div class="row m-2 photoContainer">
-      <a
-        class="photoSize"
-        href="https://www.educaweb.com/profesion/guia-turistico-212/"
-        target="_blank"
-        ><ion-img
-          src="./assets/images/guiaturistico.png"
-          alt="Foto de guía"
-        ></ion-img
-      ></a>
+      <a class="photoSize" href="https://www.educaweb.com/profesion/guia-turistico-212/" target="_blank">
+        <ion-img src="./assets/images/guiaturistico.png" alt="Foto de guía"></ion-img>
+      </a>
     </div>
   </div>
 
@@ -204,15 +198,8 @@
     <div id="template" class="d-flex">
       <ion-img src="/assets/images/islita.png" alt="Playa"></ion-img>
       <p id="message">
-        Vaya, parece que no has iniciado sesión, vamos a cambiar eso!!
+        Vaya, parece que no has iniciado sesión
       </p>
-      <ion-row class="m-2">
-        <ion-col>
-          <ion-button id="margin-button" routerLink="/login"
-            >Iniciar sesión</ion-button
-          >
-        </ion-col>
-      </ion-row>
     </div>
   </ng-template>
 </ion-content>

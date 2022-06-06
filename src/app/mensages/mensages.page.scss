@@ -1,0 +1,30 @@
+#logo {
+    max-width: 100px;
+    max-height: 100px;
+}
+
+.imgLogout{
+    max-width: 20vh;
+    max-height: 20vh;
+}
+
+#template {
+    /*margin-bottom:vh;
+    margin-top: 10vh;*/
+    margin-left: 30vw;
+    margin-right: 30vw;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+#margin-button {
+    margin-top: 2vh;
+  }
+#message {
+    margin-top: 3vh;
+    font-size: 1.8em;
+    text-align: center;
+}
+#mensajeLista{
+    flex-wrap: wrap;
+}

@@ -8,6 +8,12 @@ import { UsuariosService } from '../services/usuarios.service';
 import Swal from 'sweetalert2';
 import { Marcador } from '../interfaces/marcador.interface';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { Mensaje } from '../interfaces/mensaje.interface'
+
+interface InputOptions {
+  uid: string
+  username: string
+}
 
 @Component({
   selector: 'app-popup',
@@ -23,27 +29,22 @@ export class PopupComponent implements OnInit {
   @Input() marcador: Marcador
   @Input() ciudad: boolean
   guiasPopup: Usuario[] = []
-  inputOptions:{}
+  public inputOptions: {} = {}
+  newUser: Usuario
 
   constructor(
     private resolver: ComponentFactoryResolver,
     public userService: UsuariosService,
     private authSvc: AuthService,
     private afs: AngularFirestore) {
+
     this.user$.subscribe((usuario) => {
       this.usuLogged = usuario
-    })
-
-    this.guias.forEach((guiaUid) => {
-      this.userService.getUser(guiaUid).subscribe((usu: Usuario) => {
-        var newUser = `${usu.uid}`
-        this.inputOptions[newUser] = usu.username
-      })
     })
   }
 
   async ngOnInit() {
-    this.guias.forEach(uidGuia => {
+    this.guias.forEach((uidGuia, index) => {
       this.userService.getUser(uidGuia).subscribe((usu: Usuario) => {
         this.guiasPopup.push(usu)
       })
@@ -69,32 +70,50 @@ export class PopupComponent implements OnInit {
   // El guia rechaza:
   //    - Se manda un mensaje al viajero y otro al guía de cita rechazada
   async pedirCita(event) {
-
-    if(this.inputOptions) {
-      console.log("inputOptions: " + JSON.stringify(this.inputOptions))
-
+    var options = {}
+    $.map(this.guiasPopup, function (o) {
+      options[o.uid] = o.username
+    })
+    if (this.inputOptions) {
       const body = document.getElementsByTagName('body')[0];
-      await Swal.fire({
+      Swal.fire({
         title: 'Solicitar un encuentro',
         input: 'select',
         inputPlaceholder: 'Seleccione un guía',
-        inputOptions: this.inputOptions,
+        inputOptions: options,
         showCancelButton: true,
-        inputValidator: (value) => {
-          return new Promise((resolve) => {
-            if (value) {
-              resolve(value)
-            } else {
-              resolve('Necesitas seleccionar un guía!')
-            }
-          })
-        }
+
       }).then((result) => {
         if (result.isConfirmed) {
-          const body = document.getElementsByTagName('body')[0];
-          console.log("guia seleccionado: "+result.value)
-          Swal.fire('Operación aceptada', '', 'success')
-          body.classList.remove('swal2-height-auto');
+          const date = new Date()
+          date.setDate(date.getDate() + 2)
+          const mensaje: Mensaje = {
+            idEmisor: this.usuLogged.uid,
+            idReceptor: result.value,
+            idSitio: this.marcador.uid,
+            fecha: new Date().toLocaleDateString(),
+            peticion: true,
+            pendiente: true,
+            aceptada: false,
+            texto: `Esta es una petición para poder vernos en ${this.marcador.descripcion} el día: ${date.toLocaleDateString()}. Fdo: ${this.usuLogged.username}`
+          }
+
+          const mensaje2: Mensaje = {
+            idEmisor: 'PhysicallGuideness',
+            idReceptor: this.usuLogged.uid,
+            idSitio: this.marcador.uid,
+            fecha: new Date().toLocaleDateString(),
+            peticion: false,
+            texto: `Se ha enviado una petición al guía ${options[result.value]} para vernos en ${this.marcador.descripcion} el día: ${date.toLocaleDateString()}`
+          }
+
+          this.afs.collection<Mensaje>('mensajes').add(mensaje).then(() => {
+            this.afs.collection<Mensaje>('mensajes').add(mensaje2).then(() => {
+              const body = document.getElementsByTagName('body')[0];
+              Swal.fire('Operación aceptada', '', 'success')
+              body.classList.remove('swal2-height-auto');
+            })
+          })
         }
       })
       body.classList.remove('swal2-height-auto');
