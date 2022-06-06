@@ -7,4 +7,5 @@ export interface Mensaje {
     peticion: boolean
     pendiente?: boolean
     aceptada?: boolean
+    uid:string
 }

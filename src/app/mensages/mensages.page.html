@@ -59,6 +59,44 @@
 
     <section class="mensajes">
       <ul class="list-group m-5">
+        <div *ngIf="user.type=='Guía'" id="guiaItem">
+          <li id="mensajeLista" *ngFor="let mensaje of mensajesFiltrados"
+            class="list-group-item d-flex justify-content-between align-items-center flex-row">
+            <div *ngIf="mensaje.peticion; else notificacion">
+              <div *ngIf="mensaje.pendiente; else contestada">
+                <span class="badge rounded-pill bg-dark d-flex align-items-center m-2">
+                  <span class="fa fa-clock"></span>
+                </span>
+              </div>
+              
+              <ng-template #contestada>
+                <div *ngIf="mensaje.aceptada; else rechazada">
+                  <span class="badge rounded-pill bg-success d-flex align-items-center m-2">
+                    <span class="fa fa-check"></span>
+                  </span>
+                </div>
+              </ng-template>
+              <ng-template #rechazada>
+                <span class="badge rounded-pill bg-danger d-flex align-items-center m-2">
+                  <span class="fa fa-times"></span>
+                </span>
+              </ng-template>
+              
+            </div>
+            <ng-template #notificacion>
+              <span class="badge rounded-pill bg-warning d-flex align-items-center m-2">
+                <span class="fa fa-bell"></span>
+              </span>
+            </ng-template>
+            <span class="text-wrap" id="textoMensaje">{{mensaje.texto}}</span>
+            <span class="text-wrap" id="fechaMensaje"> Recibido: {{mensaje.fecha}}</span>
+            <div *ngIf="mensaje.pendiente" id="buttonContainer">
+              <button id="aceptButton" class="m-2 btn bg-success" (click)="onAcept(mensaje)">Aceptar</button>
+              <button id="dismissButton" class="m-2 btn bg-danger" (click)="onDismiss(mensaje)">Rechazar</button>
+            </div>
+          </li>
+        </div>
+        <div *ngIf="user.type=='Viajero'" id="viajeroItem">
         <li id="mensajeLista" *ngFor="let mensaje of mensajesFiltrados"
           class="list-group-item d-flex justify-content-between align-items-center flex-row">
           <div *ngIf="mensaje.peticion; else notificacion">
@@ -89,6 +127,7 @@
           <span class="text-wrap" id="textoMensaje">{{mensaje.texto}}</span>
           <span class="text-wrap" id="fechaMensaje"> Recibido: {{mensaje.fecha}}</span>
         </li>
+      </div>
       </ul>
     </section>
   </div>
