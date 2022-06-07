@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
@@ -9,12 +9,14 @@ import { AuthService } from '../services/auth.service';
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
 })
-export class LoginPage implements OnInit {
+export class LoginPage implements OnInit,OnDestroy {
   constructor(
     private authSvc: AuthService,
     private router: Router,
     private afs: AngularFirestore
   ) {}
+  ngOnDestroy(): void {
+  }
 
   ngOnInit() {}
   async onLogin(email, password) {
