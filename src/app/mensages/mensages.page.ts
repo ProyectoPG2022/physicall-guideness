@@ -117,13 +117,15 @@ export class MensagesPage implements OnInit {
                     this.userEmisor.sitios.push(mensaje.idSitio);
                     this.afs
                       .doc(`usuarios/${mensaje.idEmisor}`)
-                      .update({ sitios: this.userEmisor.sitios });
-                    /*const body = document.getElementsByTagName('body')[0];
-                    Swal.fire({
-                      icon: 'success',
-                      text: 'Se ha aceptado la petición',
-                    });
-                    body.classList.remove('swal2-height-auto');*/
+                      .update({ sitios: this.userEmisor.sitios })
+                      .then(() => {
+                        const body = document.getElementsByTagName('body')[0];
+                        Swal.fire({
+                          icon: 'success',
+                          text: 'Se ha aceptado la petición',
+                        });
+                        body.classList.remove('swal2-height-auto');
+                      });
                   });
               });
           });
