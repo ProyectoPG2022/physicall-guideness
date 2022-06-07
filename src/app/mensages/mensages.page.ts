@@ -195,7 +195,7 @@ export class MensagesPage implements OnInit {
                     const body = document.getElementsByTagName('body')[0];
                     Swal.fire({
                       icon: 'success',
-                      text: 'Se ha aceptado la petición',
+                      text: 'Se ha rechazado la petición',
                     });
                     body.classList.remove('swal2-height-auto');
                   });
