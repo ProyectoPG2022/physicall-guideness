@@ -70,27 +70,48 @@ export class MensagesPage implements OnInit {
 
           messageRef.update(message).then(() => {
             //Mandamos un mensaje al viajero q la petición ha sido aceptada
-            const uidAceptMessage = uuidv4();
-            const aceptMessage: Mensaje = {
+            const uidAceptMessageViajero = uuidv4();
+            const aceptMessageViajero: Mensaje = {
               idEmisor: 'PhysicallGuideness',
               idReceptor: mensaje.idEmisor,
               idSitio: mensaje.idSitio,
               fecha: new Date().toLocaleDateString(),
-              texto: `El guía ${this.usuLogged.username} ha aceptado tu petición para el día ${mensaje.fecha}`,
+              texto: `El guía ${this.usuLogged.username} ha aceptado tu petición enviada el día: ${mensaje.fecha}`,
               peticion: false,
-              uid: uidAceptMessage,
+              uid: uidAceptMessageViajero,
             };
             const messageAceptRef: AngularFirestoreDocument<Mensaje> =
-              this.afs.doc(`mensajes/${uidAceptMessage}`);
+              this.afs.doc(`mensajes/${uidAceptMessageViajero}`);
             //Mostrar un sweetalert de aviso
-            messageAceptRef.set(aceptMessage, { merge: true }).then(() => {
-              const body = document.getElementsByTagName('body')[0];
-              Swal.fire({
-                icon: 'success',
-                text: 'Se ha aceptado la petición',
+            messageAceptRef
+              .set(aceptMessageViajero, { merge: true })
+              .then(() => {
+                //Enviamos una notificación al guía
+
+                const uidAceptMessageGuia = uuidv4();
+                const aceptMessageGuia: Mensaje = {
+                  idEmisor: 'PhysicallGuideness',
+                  idReceptor: this.usuLogged.uid,
+                  idSitio: mensaje.idSitio,
+                  fecha: new Date().toLocaleDateString(),
+                  texto: `Has aceptado la petición`,
+                  peticion: false,
+                  uid: uidAceptMessageGuia,
+                };
+                const messageAceptRefGuia: AngularFirestoreDocument<Mensaje> =
+                  this.afs.doc(`mensajes/${uidAceptMessageGuia}`);
+                //Mostrar un sweetalert de aviso
+                messageAceptRefGuia
+                  .set(aceptMessageGuia, { merge: true })
+                  .then(() => {
+                    const body = document.getElementsByTagName('body')[0];
+                    Swal.fire({
+                      icon: 'success',
+                      text: 'Se ha aceptado la petición',
+                    });
+                    body.classList.remove('swal2-height-auto');
+                  });
               });
-              body.classList.remove('swal2-height-auto');
-            });
           });
         }
       });
@@ -119,7 +140,7 @@ export class MensagesPage implements OnInit {
         confirmButtonText: 'Rechazar cita',
       }).then((result) => {
         if (result.isConfirmed) {
-          //Actualizamos la petición a rechazada
+          //Actualizamos la petición a aceptada
           const message: Mensaje = {
             idEmisor: mensaje.idEmisor,
             idReceptor: mensaje.idReceptor,
@@ -137,27 +158,48 @@ export class MensagesPage implements OnInit {
 
           messageRef.update(message).then(() => {
             //Mandamos un mensaje al viajero q la petición ha sido rechazada
-            const uidAceptMessage = uuidv4();
-            const aceptMessage: Mensaje = {
+            const uidDismissMessageViajero = uuidv4();
+            const dismissMessageViajero: Mensaje = {
               idEmisor: 'PhysicallGuideness',
               idReceptor: mensaje.idEmisor,
               idSitio: mensaje.idSitio,
               fecha: new Date().toLocaleDateString(),
-              texto: `El guía ${this.usuLogged.username} ha rechazado tu petición para el día ${mensaje.fecha}`,
+              texto: `El guía ${this.usuLogged.username} ha rechazado tu petición enviada el día: ${mensaje.fecha}`,
               peticion: false,
-              uid: uidAceptMessage,
+              uid: uidDismissMessageViajero,
             };
-            const messageAceptRef: AngularFirestoreDocument<Mensaje> =
-              this.afs.doc(`mensajes/${uidAceptMessage}`);
+            const messageDismissRef: AngularFirestoreDocument<Mensaje> =
+              this.afs.doc(`mensajes/${uidDismissMessageViajero}`);
             //Mostrar un sweetalert de aviso
-            messageAceptRef.set(aceptMessage, { merge: true }).then(() => {
-              const body = document.getElementsByTagName('body')[0];
-              Swal.fire({
-                icon: 'success',
-                text: 'Se ha rechazado la petición',
+            messageDismissRef
+              .set(dismissMessageViajero, { merge: true })
+              .then(() => {
+                //Enviamos una notificación al guía
+
+                const uidDismissMessageGuia = uuidv4();
+                const dismissMessageGuia: Mensaje = {
+                  idEmisor: 'PhysicallGuideness',
+                  idReceptor: this.usuLogged.uid,
+                  idSitio: mensaje.idSitio,
+                  fecha: new Date().toLocaleDateString(),
+                  texto: `Has rechazado la petición`,
+                  peticion: false,
+                  uid: uidDismissMessageGuia,
+                };
+                const messageDismissRefGuia: AngularFirestoreDocument<Mensaje> =
+                  this.afs.doc(`mensajes/${uidDismissMessageGuia}`);
+                //Mostrar un sweetalert de aviso
+                messageDismissRefGuia
+                  .set(dismissMessageGuia, { merge: true })
+                  .then(() => {
+                    const body = document.getElementsByTagName('body')[0];
+                    Swal.fire({
+                      icon: 'success',
+                      text: 'Se ha aceptado la petición',
+                    });
+                    body.classList.remove('swal2-height-auto');
+                  });
               });
-              body.classList.remove('swal2-height-auto');
-            });
           });
         }
       });
