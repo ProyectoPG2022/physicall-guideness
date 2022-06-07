@@ -198,7 +198,7 @@ export class MensagesPage implements OnInit {
                   idReceptor: this.usuLogged.uid,
                   idSitio: mensaje.idSitio,
                   fecha: new Date().toLocaleDateString(),
-                  texto: `Has aceptado la petición de ${this.userEmisor.username}`,
+                  texto: `Has rechazado la petición de ${this.userEmisor.username}`,
                   peticion: false,
                   uid: uidDismissMessageGuia,
                 };
