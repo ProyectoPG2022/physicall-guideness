@@ -23,6 +23,7 @@ export class MensagesPage implements OnInit {
   usuLogged: any;
   mensajesOG: Mensaje[] = [];
   mensajesFiltrados: Mensaje[] = [];
+  private userEmisor;
 
   constructor(
     private authSvc: AuthService,
@@ -52,6 +53,15 @@ export class MensagesPage implements OnInit {
         confirmButtonText: 'Aceptar cita',
       }).then((result) => {
         if (result.isConfirmed) {
+          //Buscamos el emisor del mensaje para despues poder añadirle el lugar a su array
+
+          this.afs
+            .doc(`usuarios/${mensaje.idEmisor}`)
+            .valueChanges()
+            .subscribe((user) => {
+              this.userEmisor = user;
+            });
+
           //Actualizamos la petición a aceptada
           const message: Mensaje = {
             idEmisor: mensaje.idEmisor,
@@ -94,7 +104,7 @@ export class MensagesPage implements OnInit {
                   idReceptor: this.usuLogged.uid,
                   idSitio: mensaje.idSitio,
                   fecha: new Date().toLocaleDateString(),
-                  texto: `Has aceptado la petición`,
+                  texto: `Has aceptado la petición de ${this.userEmisor.username}`,
                   peticion: false,
                   uid: uidAceptMessageGuia,
                 };
@@ -104,12 +114,16 @@ export class MensagesPage implements OnInit {
                 messageAceptRefGuia
                   .set(aceptMessageGuia, { merge: true })
                   .then(() => {
-                    const body = document.getElementsByTagName('body')[0];
+                    this.userEmisor.sitios.push(mensaje.idSitio);
+                    this.afs
+                      .doc(`usuarios/${mensaje.idEmisor}`)
+                      .update({ sitios: this.userEmisor.sitios });
+                    /*const body = document.getElementsByTagName('body')[0];
                     Swal.fire({
                       icon: 'success',
                       text: 'Se ha aceptado la petición',
                     });
-                    body.classList.remove('swal2-height-auto');
+                    body.classList.remove('swal2-height-auto');*/
                   });
               });
           });
@@ -182,7 +196,7 @@ export class MensagesPage implements OnInit {
                   idReceptor: this.usuLogged.uid,
                   idSitio: mensaje.idSitio,
                   fecha: new Date().toLocaleDateString(),
-                  texto: `Has rechazado la petición`,
+                  texto: `Has aceptado la petición de ${this.userEmisor.username}`,
                   peticion: false,
                   uid: uidDismissMessageGuia,
                 };

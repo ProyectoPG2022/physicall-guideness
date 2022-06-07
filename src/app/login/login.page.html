@@ -5,7 +5,7 @@
 </ion-header>
 
 <ion-content>
-  <form class="formulario">
+  <form #formu class="formulario">
     <ion-item lines="full" class="m-2">
       <ion-label position="floating">Correo electronico</ion-label>
       <ion-input type="text" #email required></ion-input>
@@ -17,7 +17,7 @@
 
     <ion-row>
       <ion-col>
-        <ion-button class="m-1" (click)="onLogin(email,password)">
+        <ion-button class="m-1" (click)="onLogin(email,password); formu.reset()">
           Iniciar sesión
         </ion-button>
         <!--ion-button type="submit" class="m-1" color="danger" (click)="onLoginGoogle()">
