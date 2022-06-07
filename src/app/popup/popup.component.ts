@@ -71,6 +71,7 @@ export class PopupComponent implements OnInit {
   //    - Se manda un mensaje al viajero y otro al guía de cita aceptada
   // El guia rechaza:
   //    - Se manda un mensaje al viajero y otro al guía de cita rechazada
+  
   async pedirCita(event) {
     var options = {};
     $.map(this.guiasPopup, function (o) {
