@@ -117,10 +117,10 @@ export class HomePage implements OnInit, AfterViewInit {
       navigator.geolocation.getCurrentPosition(async (pos) => {
         const latitude = pos.coords.latitude
         const longitude = pos.coords.longitude
-        const latBullas = 38.0467272
-        const lngBullas = -1.7229798
+        //const latBullas = 38.0467272
+        //const lngBullas = -1.7229798
         // cambiar estos números por latitude y longitud
-        var coords = new L.LatLng(latBullas, lngBullas)
+        var coords = new L.LatLng(latitude, longitude)
         if (this.map == undefined) {
           await this.initMap(coords)
         }
